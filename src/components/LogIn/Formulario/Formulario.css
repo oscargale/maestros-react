@@ -1,0 +1,101 @@
+.contenedor-login {
+  position: relative;
+  width: 400px;
+  height: 330px;
+  margin: auto auto;
+}
+
+.contenedor-label {
+  margin: auto;
+  font-size: 15px;
+}
+
+.contenedor-label label {
+  font-weight: normal;
+}
+
+.contenedor-input {
+  margin: 15px 0;
+}
+
+.mensaje {
+  color: rgba(255, 0, 0, 0.637);
+  font-weight: bold;
+  font-size: 16px;
+  text-align: center;
+
+}
+
+.titulo-login {
+  color: rgba(1, 22, 139, 0.781);
+  border-bottom: 1px solid black;
+  font-size: 28px;
+  margin: 0px;
+}
+
+.input-text {
+  position: relative;
+  width: 100%;
+  height: 40px;
+  padding: 0.525rem 10px 0.525rem 10px; 
+  letter-spacing: normal;
+  border: 1px solid #ccc;
+  background: transparent;
+  border-radius: 4px;
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+}
+
+.input-text:focus {
+  outline: none;
+  border: 1px solid #1a73e8be;
+  transition: 'all 400ms ease-in-out';
+}
+
+.input-text:hover {
+  transition-duration: .2s, .5s;
+  transition-timing-function: linear, ease-in-out;
+  -webkit-box-shadow: 0px 5px 20px -11px rgba(168,168,168,1);
+  -moz-box-shadow: 0px 5px 20px -11px rgba(168,168,168,1);
+  box-shadow: 0px 5px 20px -11px rgba(168,168,168,1);
+}
+
+.boton-login {
+  width: 400px;
+  margin: auto;
+  border: 2px solid #1a73e8be;
+  outline: none;
+  color: #1a73e8be;
+  background-color: rgba(255, 255, 255, 0.747);
+  padding: 10px 20px;
+  cursor: pointer;
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  font-size: 19px;
+  font-weight: bold;
+  border-bottom-left-radius: 9999px;
+  border-bottom-right-radius: 9999px;
+  border-top-left-radius: 9999px;
+  border-top-right-radius: 9999px;
+}
+
+.boton-login:hover {
+  transition-duration: .1s, .5s;
+  transition-timing-function: linear, ease-in-out;
+  background-color: #1a73e8be;
+  color: white;
+}
+
+.contrasena {
+  color: #1a73e893;
+  float: right;
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  cursor: pointer;
+}
+
+.contrasena:hover {
+  transition-duration: .1s, .5s;
+  transition-timing-function: linear, ease-in-out;
+  color: #1a73e8;;
+}

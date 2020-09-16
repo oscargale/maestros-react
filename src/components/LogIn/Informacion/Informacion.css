@@ -1,0 +1,42 @@
+.contenedor-centro {
+    max-width: 800px;
+    height: 550px;
+    margin: 25px auto;
+  }
+  
+  .contenedor-titulo {
+    padding: .3rem 0 .3rem 0;
+  }
+  
+  .contenedor-parrafo {
+    padding: 0 20px 0rem 20px;
+  }
+
+  .titulo-login {
+    color: rgba(1, 22, 139, 0.781);
+    border-bottom: 1px solid black;
+  }
+
+  .parrafo-01 {
+    font-size: 16px;
+  }
+  
+  .parrafo-02 {
+    font-size: 18px;
+    color: rgba(255, 38, 38, 0.822);
+    font-weight: bold;
+  }
+
+  @media screen and (max-width: 768px) {
+    .contenedor-centro { 
+      width:100%;
+      transition-duration: .2s, .5s;
+      transition-timing-function: linear, ease-in-out;
+    }
+      
+    .titulo-login {
+      text-align: center;
+      transition-duration: .2s, .5s;
+      transition-timing-function: linear, ease-in-out;
+    }
+  }

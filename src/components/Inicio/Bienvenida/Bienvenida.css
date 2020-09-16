@@ -1,0 +1,30 @@
+.contendor-bienvenida {
+    width: 100%;
+    height: auto;
+    margin: auto auto;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    -webkit-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+}
+
+.contendor-bienvenida:hover {
+    background-color: rgba(0, 0, 0, 0.03);
+}
+
+.mensaje-bienvenida {
+    width: 800px;
+    padding: 10px 30px;
+    margin: auto;
+    font-size: 15px;
+    color: red;
+    font-weight: 800;
+    -webkit-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+}
+
+.mensaje-bienvenida:hover {
+    -webkit-box-shadow: 0px 7px 12px 0px rgba(204, 204, 204, 0.37);
+    -moz-box-shadow: 0px 7px 12px 0px rgba(204, 204, 204, 0.37);
+    box-shadow: 0px 7px 12px 0px rgba(204, 204, 204, 0.37);
+}

@@ -1,0 +1,14 @@
+.contenedor-centro {
+  max-width: 800px;
+  min-height: 550px;
+  max-width: 550px;
+  margin: 25px auto;
+}
+
+@media screen and (max-width: 768px) {
+  .contenedor-centro { 
+    width:100%;
+    transition-duration: .2s, .5s;
+    transition-timing-function: linear, ease-in-out;
+  }
+}

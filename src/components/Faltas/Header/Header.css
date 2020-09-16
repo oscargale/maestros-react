@@ -1,0 +1,23 @@
+.header-faltas {
+    height: 150px;
+    background: rgb(255,221,87);
+    background: linear-gradient(43deg, rgba(255,221,87,0.7094188017003676) 0%, rgba(252,210,44,0.9251050762101716) 96%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-left: 10px solid #ffe346;
+    -webkit-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+}
+
+.header-faltas :hover {
+    background-color: #ffe346;
+}
+
+.titulo-faltas {
+    width: auto;
+    margin-top: 0px;
+    font-size: 20px;
+    color: rgba(49, 49, 49, 0.884);
+}

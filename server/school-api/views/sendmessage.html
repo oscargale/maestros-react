@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sample Site</title>
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <style>
+        body { padding-top:50px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="jumbotron">            
+            <form action="" id="form">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="cmbLevel">Nivel Escolar</label>
+                            <select name="cmbLevel" id="cmbLevel" class="form-control">
+                                <option value="0">Todos</option>
+                                <option value="1">Preescolar</option>
+                                <option value="2">Primaria</option>
+                                <option value="3">Secundaria</option>
+                                <option value="4">Bachillerato</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="cmbMessageType">Tipo de Mensaje</label>
+                            <select name="cmbMessageType" id="cmbMessageType" class="form-control">
+                                <option value="1">General</option>
+                                <option value="2">Recordatorio de Pago</option>
+                                <option value="3">Pase de Salida</option>
+                                <option value="4">Agradecimiento de Pago</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="cmbMessageSubtype">Subtipo de Mensaje</label>
+                            <select name="cmbMessageSubtype" id="cmbMessageSubtype" class="form-control">
+                                <option value="0">Ninguno</option>
+                                <option value="1">Junta de Padres de Familia</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="cmbGrade">Grado</label>
+                            <select name="cmbGrade" id="cmbGrade" class="form-control">
+                                <option value="0">Todos</option>
+                                <option value="1">Primero</option>
+                                <option value="2">Segundo</option>
+                                <option value="3">Tercero</option>
+                                <option value="4">Cuarto</option>
+                                <option value="5">Quinto</option>
+                                <option value="6">Sexto</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="txtGroup">Grupo</label>
+                            <input type="text" class="form-control" id="txtGroup" placeholder="" maxlength="1">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="txtMessage" placeholder="Mensaje">
+                        </div>
+                    </div>
+                </div>
+                <input type="submit" value="Enviar" class="btn btn-primary">
+            </form>            
+        </div>
+
+        <div class="jumbotron">          
+            <h2>Enviar mensaje a deudores</h2>  
+            <form action="" id="form2">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="cmbDeudoresMes">Deudores al mes de: </label>
+                            <select name="cmbDeudoresMes" id="cmbDeudoresMes" class="form-control">
+                                <option value="5">Enero</option>
+                                <option value="6">Febrero</option>
+                                <option value="7">Marzo</option>
+                                <option value="8">Abril</option>
+                                <option value="9">Mayo</option>
+                                <option value="10">Junio</option>
+                                <option value="11">Julio</option>
+                                <option value="12">Agosto</option>
+                                <option value="1">Septiembre</option>
+                                <option value="2">Octubre</option>
+                                <option value="3">Noviembre</option>
+                                <option value="4">Diciembre</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="cmbDeudoresMesesNoPagados">No. De meses no pagados</label>
+                            <select name="cmbDeudoresMesesNoPagados" id="cmbDeudoresMesesNoPagados" class="form-control">
+                                <option value="0">Opcional</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                            </select>
+                        </div>
+                    </div>                
+                </div>
+                
+                <input type="submit" value="Enviar Mensaje de pago a Deudores" class="btn btn-primary">
+            </form>            
+        </div>
+    </div>
+
+    <script
+    src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
+
+    <script>
+        $("#form2").submit(function(e) {
+            e.preventDefault();
+
+            var cmbDeudoresMes = $('#cmbDeudoresMes').val();
+            var cmbDeudoresMesesNoPagados = $('#cmbDeudoresMesesNoPagados').val();
+
+            $.ajax({
+                url: "/a9d9send/sendMessageToDebtors",
+                data: { mes_cargo: cmbDeudoresMes, meses: cmbDeudoresMesesNoPagados} ,
+                type: "POST", 
+                success: function(responseData) {
+                    if(responseData.success) {
+                        alert("Mensaje enviado correctamente");
+                    }else {
+                        alert(responseData.message);
+                    }
+                },
+                error: console.error
+            });
+        });
+
+        $("#form").submit(function(e) {
+            e.preventDefault();
+
+            var cmbLevel = $('#cmbLevel').val();
+            var cmbMessageType = $('#cmbMessageType').val();
+            var cmbMessageSubtype = $('#cmbMessageSubtype').val();
+            var cmbGrade = $('#cmbGrade').val();
+            var txtGroup =$('#txtGroup').val().toUpperCase();
+            var txtMessage = $('#txtMessage').val();
+
+            if(txtMessage.length < 5) {
+                alert("Mensaje muy corto"); return;
+            }
+
+            $.ajax({
+                url: "/a9d9send/send",
+                data: { id_level: cmbLevel, id_message_type: cmbMessageType, id_message_subtype: cmbMessageSubtype, id_grade: cmbGrade, group: txtGroup, message: txtMessage} ,
+                type: "POST", 
+                success: function(responseData) {
+                    if(responseData.success) {
+                        alert("Mensaje enviado correctamente");
+                    }else {
+                        alert(responseData.message);
+                    }
+                },
+                error: console.error
+            });
+        });
+       
+    </script>
+
+</body>
+</html>

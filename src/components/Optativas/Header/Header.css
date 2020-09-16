@@ -1,0 +1,23 @@
+.header-materias {
+    height: 150px;
+    background: rgb(76,177,5);
+    background: linear-gradient(204deg, rgba(76,177,5,1) 0%, rgba(76,177,5,0.6646008745294993) 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-left: 10px solid rgb(63, 151, 0);
+    -webkit-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+}
+
+.header-materias:hover {
+    background-color: rgb(63, 151, 0);
+}
+
+.titulo-materias {
+    width: auto;
+    margin-top: 0px;
+    font-size: 20px;
+    color: rgba(49, 49, 49, 0.884);
+}

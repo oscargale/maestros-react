@@ -1,0 +1,23 @@
+.header-calificaciones {
+    height: 150px;
+    background: rgb(255,165,0);
+    background: linear-gradient(204deg, rgba(255,165,0,1) 0%, rgba(255, 166, 0, 0.616) 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-left: 10px solid rgb(255,165,0);
+    -webkit-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+}
+
+.header-calificaciones:hover {
+    background-color: rgb(255,165,0);
+}
+
+.titulo-calificaciones {
+    width: auto;
+    margin-top: 0px;
+    font-size: 20px;
+    color: rgba(49, 49, 49, 0.884);
+}

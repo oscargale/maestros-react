@@ -1,0 +1,22 @@
+{
+  "apps" : [{
+    "name"        : "Web_API_ICO",
+    "script"      : "dist/index.js",
+    "args"        : ["", "-d", "1"],
+    "watch"       : true,
+    "node_args"   : "--harmony",
+    "merge_logs"  : true,
+    "cwd"         : "./",
+    "env": {
+      "NODE_ENV": "development",
+    },
+    "env_production" : {
+       "NODE_ENV": "production"
+    },
+    "env_staging" : {
+       "NODE_ENV" : "staging",
+       "TEST"     : true
+    }
+  }
+  ]
+}

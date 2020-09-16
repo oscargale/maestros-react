@@ -1,0 +1,105 @@
+.contenedor-usuario {
+    width: 100%;
+    min-height: 325px;
+    max-width: 325px;
+    margin: auto auto;
+    justify-content: center;
+    align-items: center;
+}
+
+/* BOTON CERRAR SESION E IMAGEN */
+.seccion-boton-perfil {
+    width: 100%;
+    height: auto;
+    margin: auto;
+    padding-top: 2.5px;
+    padding-left: 2.5px;
+    padding-bottom: 2.5px;
+    padding-right: 2.5px;
+    border-bottom: 1px solid rgb(230, 236, 240);
+}
+
+.seccion-perfil {
+    max-width: 100%;
+    min-width: 174px;
+    max-height: 175px;
+    border-bottom: 1px solid rgb(230, 236, 240);
+}
+
+.seccion-informacion {
+    width: 100%;
+    min-height: 149px;
+    max-height: 150px;
+    margin: auto;
+    padding: 5px 5px;
+    border-bottom: 1px solid rgb(230, 236, 240);
+}
+
+.seccion-alumno {
+    width: 200px;
+    min-height: 50px;
+    margin: auto;
+}
+
+.seccion-grupo {
+    width: 200px;
+    min-height: 50px;
+    margin: auto;
+}
+
+.titulo-usuario {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.informacion-usuario {
+    font-size: 14px;
+}
+
+.boton-cerrar {
+    width: 240px;
+    margin: 0 2px;
+    border: 2px solid #e81a1abe;
+    outline: none;
+    color: #e81a1abe;
+    background-color: rgba(255, 255, 255, 0.747);
+    padding: 5px 20px;
+    cursor: pointer;
+    -webkit-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+    text-decoration:none;
+    font-size: 19px;
+    font-weight: bold;
+    border-bottom-left-radius: 9999px;
+    border-bottom-right-radius: 9999px;
+    border-top-left-radius: 9999px;
+    border-top-right-radius: 9999px;
+}
+
+.boton-cerrar:hover {
+    transition-duration: .1s, .5s;
+    transition-timing-function: linear, ease-in-out;
+    background-color: #e81a1abe;
+    color: white;
+}
+
+.seccion-img-perfil {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.img-perfil {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin: auto;
+    background-color: rgba(184, 184, 184, 0.459);
+    -webkit-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+}
+
+.img-perfil:hover {
+    transition-duration: .2s, .5s;
+    transition-timing-function: linear, ease-in-out;
+    background-color: rgba(128, 128, 128, 0.459);
+}
