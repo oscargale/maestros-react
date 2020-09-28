@@ -56,7 +56,7 @@ const Materias = () => {
                 Grado: dataRow.Grado,
                 Grupo: dataRow.Grupo,
                 Id_Nivel_Ingles: dataRow.Id_Nivel_Ingles,
-                Materia: dataRow.materia,
+                Materia: dataRow.Materia,
                 Nivel: dataRow.Nivel
             });
             funcionAlumnos(dataRow);
