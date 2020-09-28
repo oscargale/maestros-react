@@ -30,7 +30,7 @@ ReactDOM.render(
         <Redirect from='/maestros-react/panel' to='/maestros-react/panel/inicio' />
       </Switch>
     </BrowserRouter>,
-  document.getElementById('md-react-app')
+  document.getElementById('md-react-app-teacher')
 );
 
 // If you want your app to work offline and load faster, you can change
