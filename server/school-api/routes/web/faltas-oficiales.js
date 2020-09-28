@@ -8,4 +8,8 @@ router.get('/faltas',
     JwtAuthentication,
     FaltasOficialesController.getFaltas);
 
+router.post('/faltas-alumnos', 
+    JwtAuthentication,
+    FaltasOficialesController.getCapturaFaltas);
+
 export default router;

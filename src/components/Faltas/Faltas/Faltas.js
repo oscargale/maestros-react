@@ -1,21 +1,28 @@
 import React, {useState, useEffect} from 'react';
 import './Faltas.css';
-import pencil from '../../../images/pencil.png';
-import cerrar from '../../../images/cerrar.png';
-import impresora from '../../../images/impresora.png';
 import api from '../../../services/api';
-import p from '../../../'
 import swal from 'sweetalert';
 
 const Faltas = () => {    
     const [materiasFaltas, setMateriasFaltas] = useState(false);
-    const [visible, setVisible] = useState(false);
+    const [alumnosFaltas, setAlumnosFaltas] = useState(false);
+    const [registros, setRegistros] = useState(0);
+    const [meses, setMeses] = useState(false);
+    const [visibleFaltas, setVisibleFaltas] = useState(false);
+    const [contador, setContador] = useState(0);
+    const [informacion, setInformacion] = useState({
+        Grado: null,
+        Grupo: null,
+        Id_Nivel_Ingles: null,
+        Materia: null,
+        Nivel: null
+    });
+
     useEffect( () => {
         const initialize = async() => {
             try { 
                 let response = await api.getFaltas();
                 let data = response.data.data;
-                console.log("faltas", data);
                 setMateriasFaltas(data);
             }catch (e){
                 if(!e.response && !e.response.data) {
@@ -29,85 +36,127 @@ const Faltas = () => {
 
     }, []);
 
-    const handleCerrar = (e) => {
-        e.preventDefault();
-        if (visible === true) {
-            setVisible(false);
+    const handleCerrar = () => {
+        if (visibleFaltas === true && contador === 1) {
+            setVisibleFaltas(false);
+            setContador(0);
+            setAlumnosFaltas(false);
         }
     }
 
     const calificar = (e) => {
         e.preventDefault();
-        if (visible === true) {
-            // HACER LA CONSULTAPARA TRAER LA INFORMACION DE LOS ALUMNOS
-
-        } else {
-            setVisible(true);
+        const target = e.target.value;
+        if (visibleFaltas === true || contador === 0) {
+            setVisibleFaltas(true);
+            setContador(1);
+            const dataRow = materiasFaltas[target];
+            setInformacion({
+                Grado: dataRow.Grado,
+                Grupo: dataRow.Grupo,
+                Id_Nivel_Ingles: dataRow.Id_Nivel_Ingles,
+                Materia: dataRow.materia,
+                Nivel: dataRow.Nivel
+            });
+            funcionAlumnosFaltas(dataRow);
         }
+    }
+
+    async function funcionAlumnosFaltas (dataRow) {
+        try {
+            const responseMateria = await api.getCapturaFaltas(dataRow);
+            console.log(responseMateria);
+            // const dataAlumnos = responseMateria.data.data.alumnos;
+            // const dataMeses = responseMateria.data.data.meses;
+            // setAlumnosFaltas(dataAlumnos);
+            // setMeses(dataMeses);
+            // setRegistros(responseMateria.data.data.alumnos.length);
+        } catch (e){
+            if(!e.response && !e.response.data) {
+                swal("Error", "Intente de nuevo más tarde.", "error");
+                return;
+            }
+        }
+    }
+
+    const handleInputData = (e) => {
+        e.preventDefault();
+        let target= e.target.name;
+        let value= e.target.value;
+        let students = [...alumnosFaltas];
+        let student = {
+            ...students[target],
+            Calificacion: value
+        };
+        students[target]= student;
+        setAlumnosFaltas(students);
     }
 
     return (
         <div>
-            <div className= "seccion-faltas hover-seccion">
-                <div className= "seccion-centro">
-                    <div className= "seccion-tabla-faltas">
-                        <div className= "hover-elemento">
-                            {/* TABLA */}
-                            <div className= "contenedor-tabla-faltas">
-                                <table className= "tabla-faltas">
-                                    <thead>
-                                        <tr>
-                                            <th style={{textAlign:'center', width:'100px'}}><label>ID</label></th>
-                                            <th style={{textAlign:'center'}}><label>CLAVE</label></th>
-                                            <th style={{textAlign:'center'}}><label>MATERIAS IMPARTIDAS</label></th>
-                                            <th style={{textAlign:'center'}}><label>NIVEL</label></th>
-                                            <th style={{textAlign:'center'}}><label>GRADO</label></th>
-                                            <th style={{textAlign:'center'}}><label>GRUPO</label></th>
-                                            <th style={{textAlign:'center'}}><label>CALIFICAR</label></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        { materiasFaltas && materiasFaltas.map( (grade, i) => {
-                                            return (
-                                            <tr key={i}>
-                                                {/* ID */}
-                                                <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{grade.Id_Personal}</td>
-                                                {/* CLAVE */}
-                                                <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{grade.Id_Materia}</td>
-                                                {/* MATERIAS */}
-                                                <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{grade.Materia}</td>
-                                                {/* NIVEL */}
-                                                <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{grade.Id_Nivel}</td>
-                                                {/* GRADO */}
-                                                <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{grade.Id_Grado}</td>
-                                                {/* GRUPO */}
-                                                <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{grade.Grupo}</td>
-                                                {/* CALIFICAR */}
-                                                <td style={{display:'flex', textAlign:'center'}}>
-                                                    <div className= "boton-pencil" >
-                                                        <img src= {pencil} alt= "Calificar" 
-                                                        name= "calificar" 
-                                                        onClick= {calificar}
-                                                        value= {materiasFaltas[i]} />
-                                                    </div>
-                                                </td>
+            {
+                !visibleFaltas &&
+                <div className= "seccion-faltas hover-seccion fade-in">
+                    <div className= "seccion-centro">
+                        <div className= "seccion-tabla-faltas">
+                            <div className= "hover-elemento">
+                                {/* TABLA */}
+                                <div className= "contenedor-tabla-faltas">
+                                    <table className= "tabla-faltas">
+                                        <thead>
+                                            <tr>
+                                                <th style={{textAlign:'center', width:'100px'}}><label>PERSONAL</label></th>
+                                                <th style={{textAlign:'center'}}><label>CLAVE</label></th>
+                                                <th style={{textAlign:'center'}}><label>MATERIAS IMPARTIDAS</label></th>
+                                                <th style={{textAlign:'center'}}><label>NIVEL</label></th>
+                                                <th style={{textAlign:'center'}}><label>GRADO</label></th>
+                                                <th style={{textAlign:'center'}}><label>GRUPO</label></th>
+                                                <th style={{textAlign:'center'}}><label>CALIFICAR</label></th>
                                             </tr>
-                                            );
-                                        })}
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                            { materiasFaltas && materiasFaltas.map( (info, i) => {
+                                                return (
+                                                <tr key={i}>
+                                                    {/* ID */}
+                                                    <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{info.Id_Personal}</td>
+                                                    {/* CLAVE */}
+                                                    <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{info.Id_Materia}</td>
+                                                    {/* MATERIAS */}
+                                                    <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{info.Materia}</td>
+                                                    {/* NIVEL */}
+                                                    <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{info.Nivel}</td>
+                                                    {/* GRADO */}
+                                                    <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{info.Id_Grado}</td>
+                                                    {/* GRUPO */}
+                                                    <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{info.Grupo}</td>
+                                                    {/* CALIFICAR */}
+                                                    <td style={{display:'flex', textAlign:'center'}}>
+                                                        <button className= "boton-pencil calificar" 
+                                                        onClick= {calificar}
+                                                        value= {i}
+                                                        name= "calificar">
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                );
+                                            })}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            }
             {
-                visible &&
+                visibleFaltas &&
                 <div className= "seccion-faltas hover-seccion fade-in">
                     <div style={{width: '44px', height: 'auto', float: 'right', margin: '3px'}}>
-                        <div className= "boton-pencil">
-                            <img src= {cerrar} alt= "Cerrar" name= "cerrar" onClick= {handleCerrar} />
-                        </div>
+                        <button className= "boton-pencil close" 
+                        onClick= {handleCerrar}
+                        name= "cerrar">
+                        </button>
                     </div>
                     <form>
                         <div className= "seccion-centro">
@@ -115,27 +164,23 @@ const Faltas = () => {
                             <div className= "subtitulo-faltas">
                                 <div className= "contenedor-mitad-faltas" >
                                     <h4>
-                                        Listado de Alumnos del Grupo  de  de 
+                                        Listado de Alumnos de {informacion.Grado || ''} {informacion.Grupo || ''} de {informacion.Nivel || ''}
                                         <br/>
-                                        Materia:
+                                        Materia: {informacion.Materia || ''}
                                     </h4>
                                 </div>
                                 <div className= "contenedor-mitad-faltas" >
                                     <div className= "seccion-input">
-                                        <label style= {{width: 'auto', top: '0px', marginRight: '10px'}}>
+                                        <h4 style= {{width: 'auto', top: '0px', marginRight: '10px'}}>
                                             Mes:
-                                        </label>
-                                        <select className= "input-text-faltas">
-                                            <option>
-                                                1er Parcial
-                                            </option>
-                                            <option>
-                                                2do Parcial
-                                            </option>
-                                            <option>
-                                                3er Parcial
-                                            </option>
-                                        </select>
+                                        </h4>
+                                        { meses && meses.map( (mes, i) => {
+                                            return (
+                                                <select className= "input-text-materias" key={mes.Id_Mes} name= "CMBMes">
+                                                    <option>{mes.Mes}</option>
+                                                </select>
+                                            );
+                                        })}
                                     </div>
                                 </div>
                             </div>
@@ -154,18 +199,28 @@ const Faltas = () => {
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    {/* MATRICULA */}
-                                                    <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}></td>
-                                                    {/* NO. DE LISTA */}
-                                                    <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}></td>
-                                                    {/* ALUMNO */}
-                                                    <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}></td>
-                                                    {/* CALIFICION */}
-                                                    <td style= {{width:'200px'}}><input className= "input-text-materias">
-
-                                                    </input></td>
-                                                </tr>
+                                            { alumnosFaltas && alumnosFaltas.map( (alumno, i) => {
+                                                    return (
+                                                    <tr key={alumno.Matricula}>
+                                                        {/* MATRICULA */}
+                                                        <td style={{borderRight: '3px solid rgb(230, 236, 240)'}}>{alumno.Matricula || ''}</td>
+                                                        {/* NO. DE LISTA */}
+                                                        <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{alumno.Numero_Lista || ''}</td>
+                                                        {/* ALUMNO */}
+                                                        <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{alumno.Nombre || ''} {alumno.Paterno || ''} {alumno.Materno || ''}</td>
+                                                        {/* CALIFICION */}
+                                                        <td style= {{width:'200px'}}>
+                                                            <input
+                                                            placeholder= "0.0"
+                                                            className= "input-text-materias"
+                                                            value= {alumno.Calificacion || ''}
+                                                            onChange= {handleInputData}
+                                                            name={i}>
+                                                            </input>
+                                                        </td>
+                                                    </tr>
+                                                    );
+                                                })}
                                             </tbody>
                                         </table>
                                     </div>
@@ -176,7 +231,7 @@ const Faltas = () => {
                             <div>
                                 <div className= "subtitulo-faltas" style= {{height: '30px'}}>
                                     <h4>
-                                        Total de registros:
+                                        Total de registros: {registros}
                                     </h4>
                                 </div>
                                 <div className= "subtitulo-faltas" style= {{padding: '0px', height: '80px'}}>
@@ -193,9 +248,9 @@ const Faltas = () => {
                                     </div>
                                     <div className= "contenedor-mitad-faltas" >
                                         <div className= "seccion-input" style= {{height: '50px'}}>
-                                            <div className= "boton-pencil">
-                                                <img src= {impresora} alt= "Imprimir Faltas del Mes" />
-                                            </div>
+                                            <button className= "boton-pencil impresora"
+                                            name= "impresora">
+                                            </button>
                                         </div>
                                     </div>
                                 </div>

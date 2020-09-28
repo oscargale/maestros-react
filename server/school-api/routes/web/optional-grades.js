@@ -4,8 +4,12 @@ import { JwtAuthentication } from '../../../config/passport';
 
 const router = express.Router();
 
-router.get('/materias-oficiales', 
+router.get('/materias-optativas', 
     JwtAuthentication,
     OptionalGradesController.getOptionalGrades);
+
+router.post('/alumnos-optativas', 
+    JwtAuthentication,
+    OptionalGradesController.getCapturaOptional);
 
 export default router;

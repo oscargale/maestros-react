@@ -16,7 +16,6 @@ const Usuario = () => {
             try { 
                 const response = await api.getUserInfo();
                 const data = response.data;
-                console.log("data", data);
 
                 setTeacherName(data.nombre_completo);
                 setUserID(data.id_personal);

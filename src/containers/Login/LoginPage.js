@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useHistory } from "react-router-dom";
 import swal from 'sweetalert';
 import api from '../../services/api';
@@ -18,9 +18,8 @@ const LoginPage = () => {
     try { 
 
       const response = await api.postLogin(usuario, password);
-
       const data = response.data;
-      // console.log("data", data);
+      
       const token = data.token;
       localStorage.setItem('appToken', token);
       history.push('/maestros-react/panel');
