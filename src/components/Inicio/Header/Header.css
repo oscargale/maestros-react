@@ -1,15 +1,12 @@
 .header-bienvenida {
     height: 350px;
-    background-image: url(../../../images/informacion-index.jpg);
+    background-image: url(../../../../build/static/media/informacion-index.jpg);
     background-size: cover;
     background-position: center;
-    /* background: rgb(87,110,255);
-    background: linear-gradient(43deg, rgba(87,110,255,0.7094188017003676) 0%, rgba(87,110,255,1) 96%); */
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
-    /* border-left: 10px solid #576eff; */
     -webkit-transition-duration: 0.3s;
     transition-duration: 0.3s;
 }

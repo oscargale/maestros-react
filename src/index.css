@@ -48,6 +48,9 @@ code {
   border-bottom: 1px solid rgb(230, 236, 240);
   background-color: white;
   flex: 1 0 auto;
+  width: 920px;
+  max-width: 920px;
+  min-width: 920px;
 }
 
 .seccion-centro {
