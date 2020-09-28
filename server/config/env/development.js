@@ -1,7 +1,7 @@
 export default {
   env: 'development',
   jwtSecret: 'Q6ZwegS#:m?E&8(p',
-  port: 8003,
+  port: 8004,
   databaseMssql: {
     client: 'mssql',
     connection: {
