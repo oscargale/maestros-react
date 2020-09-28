@@ -1,6 +1,6 @@
 .header-bienvenida {
     height: 350px;
-    background-image: url(../../../../build/static/media/informacion-index.jpg);
+    background-image: url(../../../images/informacion-index.jpg);
     background-size: cover;
     background-position: center;
     display: flex;
