@@ -30,8 +30,8 @@
   
 .tabla-materias td {
     border-bottom: 1px solid rgba(211, 211, 211, 0.397);
-    padding: 8px 5px;
-    font-size: 12px;
+    padding: 2px 5px;
+    font-size: 14px;
   }
   
 .tabla-materias tr {
@@ -46,7 +46,7 @@
   
 .tabla-materias th {
     width: auto;
-    font-size: 14px;
+    font-size: 16px;
     padding: 13px 5px;
     text-align: left;
     background-color: #1a73e8be;
@@ -74,7 +74,7 @@
     display: flex;
     align-items: center;
     position: relative;
-    font-size: 16px;
+    font-size: 14px;
     padding: 3px 10px 3px 10px;
     letter-spacing: normal;
     border-top: 2px solid transparent;

@@ -232,7 +232,7 @@ const Materias = () => {
                                                     <th style={{textAlign:'center', width:'100px'}}><label>MATRICULA</label></th>
                                                     <th style={{textAlign:'center', borderRight: '1px solid rgb(230, 236, 240)', borderLeft: '1px solid rgb(230, 236, 240)', borderBottom: '1px solid rgb(230, 236, 240)'}}><label>NO. DE LISTA</label></th>
                                                     <th style={{textAlign:'center', borderRight: '1px solid rgb(230, 236, 240)', borderBottom: '1px solid rgb(230, 236, 240)'}}><label>ALUMNO</label></th>
-                                                    <th style={{textAlign:'center'}}><label>CALIFICACIÓN</label></th>
+                                                    <th style={{textAlign:'center', width:'200px'}}><label>CALIFICACIÓN</label></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -247,7 +247,7 @@ const Materias = () => {
                                                         <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{alumno.Paterno || ''} {alumno.Materno || ''} {alumno.Nombre || ''}</td>
                                                         {/* CALIFICION */}
                                                         <td style= {{width:'200px'}}
-                                                        className= "seccion-centro">
+                                                        className= "seccion-input-centro">
                                                             <input
                                                             placeholder= "0.0"
                                                             className= "input-text-materias"

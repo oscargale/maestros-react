@@ -427,10 +427,17 @@ h1, h2, h3, h4, h5, p, label, input {
   background-color: rgba(150, 150, 150, 0.233);
   color: #6e6e6ebe;
   cursor: default;
-}
+} 
 
 .disabled:hover,.disabled:focus, .disabled:active {
   background-color: rgba(150, 150, 150, 0.233);
   color: #6e6e6ebe;
   cursor: default;
+}
+
+.seccion-input-centro {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  justify-items: center;
 }
