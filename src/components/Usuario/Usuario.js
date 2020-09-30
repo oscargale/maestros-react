@@ -18,7 +18,7 @@ const Usuario = () => {
                 const data = response.data;
 
                 setTeacherName(data.nombre_completo);
-                setUserID(data.id_personal);
+                setUserID("(" + data.id_personal + ")");
 
             }catch (e){
                 if(!e.response && !e.response.data) {
@@ -55,7 +55,7 @@ const Usuario = () => {
                             Docente:
                         </div>
                         <div className= "informacion-usuario">
-                            {teacherName} ({userID})
+                            {teacherName} {userID}
                         </div>
                     </div>
                 </div>

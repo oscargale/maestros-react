@@ -3,7 +3,7 @@ import './Materias.css';
 import api from '../../../services/api';
 import swal from 'sweetalert';
 
-const Materias = () => {  
+const Materias = () => {
     const [materias, setMaterias] = useState(false);
     const [alumnos, setAlumnos] = useState(false);
     const [registros, setRegistros] = useState(0);
@@ -17,12 +17,12 @@ const Materias = () => {
         Materia: null,
         Nivel: null
     });
-    
+    const [asignarTodos, setAsignarTodos] = useState(0);
+
     useEffect( () => {
         const initialize = async() => {
-            try { 
+            try {
                 let response = await api.getGrades();
-                console.log(response);
                 const data = response.data.data;
                 setMaterias(data);
             }catch (e){
@@ -97,12 +97,25 @@ const Materias = () => {
         guardar(alumnos);
     }
 
+    const handleAsignar = (e) => {
+        e.preventDefault();
+        alumnos.forEach(row => {
+            row.Calificacion= asignarTodos;
+        });
+        guardar(alumnos);
+    }
+
+    const handleInputAsignar = (e) => {
+        setAsignarTodos(e.target.value);
+    }
+
     async function guardar (dataAlumnos) {
         try {
             const responseGuardar = await api.postCalificaciones(dataAlumnos);
-            console.log(responseGuardar);
             if (responseGuardar) {
-                swal("Completado", "Se guardó la informacion con exito", "success");
+                swal("Completado", "Se guardó la informacion con exito.", "success");
+                const dataAlumnos = responseGuardar.data.data;
+                setAlumnos(dataAlumnos);
                 return;
             }
         } catch (e) {
@@ -111,13 +124,13 @@ const Materias = () => {
                 return;
             }
         }
-        
+
     }
 
     return (
         <div>
             {
-                !visible && 
+                !visible &&
                 <div className= "seccion-materias hover-seccion fade-in">
                     <div className= "seccion-centro">
                         <div className= "seccion-tabla-materias">
@@ -154,7 +167,7 @@ const Materias = () => {
                                                     <td name= "Grupo" style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{materia.Grupo || ''}</td>
                                                     {/* CALIFICAR */}
                                                     <td style={{display:'flex', textAlign:'center'}}>
-                                                        <button className= "boton-pencil calificar" 
+                                                        <button className= "boton-pencil calificar"
                                                         onClick= {calificar}
                                                         value= {i}
                                                         name= "Calificar">
@@ -173,10 +186,10 @@ const Materias = () => {
                 </div>
             }
             {
-                visible && 
+                visible &&
                 <div className= "seccion-materias hover-seccion fade-in">
                     <div style={{width: '44px', height: 'auto', float: 'right', margin: '3px'}}>
-                        <button className= "boton-pencil close" 
+                        <button className= "boton-pencil close"
                         onClick= {handleCerrar}
                         name= "cerrar">
                             {/* <img src= {cerrar} alt= "Cerrar" /> */}
@@ -227,11 +240,11 @@ const Materias = () => {
                                                     return (
                                                     <tr key={alumno.Matricula}>
                                                         {/* MATRICULA */}
-                                                        <td style={{borderRight: '3px solid rgb(230, 236, 240)'}}>{alumno.Matricula || ''}</td>
+                                                        <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{alumno.Matricula || ''}</td>
                                                         {/* NO. DE LISTA */}
                                                         <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{alumno.Numero_Lista || ''}</td>
                                                         {/* ALUMNO */}
-                                                        <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{alumno.Nombre || ''} {alumno.Paterno || ''} {alumno.Materno || ''}</td>
+                                                        <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{alumno.Paterno || ''} {alumno.Materno || ''} {alumno.Nombre || ''}</td>
                                                         {/* CALIFICION */}
                                                         <td style= {{width:'200px'}}>
                                                             <input
@@ -261,12 +274,15 @@ const Materias = () => {
                                 <div className= "subtitulo-materias" style= {{padding: '0px', height: '80px'}}>
                                     <div className= "contenedor-mitad-materias">
                                         <div className= "seccion-input" style= {{height: '50px'}}>
-                                            <input className= "input-text-materias disabled" 
+                                            <input className= "input-text-materias"
                                             style= {{width:'35px', marginRight: '10px'}}
                                             placeholder= "0.0"
-                                            disabled>
+                                            name= "asignarTodos"
+                                            onChange= {handleInputAsignar}>
                                             </input>
-                                            <button className= "boton-asignar disabled" type= "submit" disabled>
+                                            <button className= "boton-asignar"
+                                            type= "submit"
+                                            onClick= {handleAsignar}>
                                                 ASIGNAR A TODOS
                                             </button>
                                         </div>
@@ -278,7 +294,7 @@ const Materias = () => {
                                             </label>
                                             <select className= "input-text-materias disabled" disabled>
                                                 <option>
-                                                    
+
                                                 </option>
                                                 <option>
                                                     Lista de asistencia
@@ -305,7 +321,7 @@ const Materias = () => {
                     </form>
                 </div>
             }
-            
+
         </div>
     );
 };

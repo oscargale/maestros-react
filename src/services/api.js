@@ -97,8 +97,6 @@ const postCalificaciones = async(calificaciones) => {
     'Content-Type': http.CONTENT_TYPE.APPLICATION_JSON,
   };
 
-  console.log("api - calificaciones", calificaciones);
-
   const token = getToken();
   if(token) {
     header['Authorization']=token;
@@ -137,8 +135,6 @@ const getCapturaFaltas = async(materia) => {
     'Content-Type': http.CONTENT_TYPE.APPLICATION_JSON,
   };
 
-  console.log("api - captura faltas", materia);
-
   const token = getToken();
   if(token) {
     header['Authorization']=token;
@@ -176,8 +172,6 @@ const getCapturaOptional = async(materia) => {
   const header = {
     'Content-Type': http.CONTENT_TYPE.APPLICATION_JSON,
   };
-
-  console.log("api - captura optativas", materia);
 
   const token = getToken();
   if(token) {

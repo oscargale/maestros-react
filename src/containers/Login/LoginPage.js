@@ -12,8 +12,6 @@ const LoginPage = () => {
   const history = useHistory();
 
   async function login(usuario, password) {
-    
-    console.log(usuario, password);
 
     try { 
 
