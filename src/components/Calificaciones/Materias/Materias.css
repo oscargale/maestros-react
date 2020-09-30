@@ -61,6 +61,13 @@
     padding-right: 10px;
 }
 
+.seccion-centro {
+    width: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .seccion-input {
     width: auto;
     display: flex;
@@ -75,7 +82,7 @@
     align-items: center;
     position: relative;
     text-align: right;
-    font-size: 14px;
+    font-size: 13px;
     padding: 3px 9px 3px 9px;
     letter-spacing: normal;
     border-top: 2px solid transparent;
@@ -109,7 +116,7 @@
     outline: none;
     color: #6e6e6ebe;
     background-color: rgba(255, 255, 255, 0.747);
-    padding: 10px 20px;
+    padding: 3px 20px;
     cursor: pointer;
     -webkit-transition-duration: 0.3s;
     transition-duration: 0.3s;

@@ -246,7 +246,8 @@ const Materias = () => {
                                                         {/* ALUMNO */}
                                                         <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{alumno.Paterno || ''} {alumno.Materno || ''} {alumno.Nombre || ''}</td>
                                                         {/* CALIFICION */}
-                                                        <td style= {{width:'200px'}}>
+                                                        <td style= {{width:'200px'}}
+                                                        className= "seccion-centro">
                                                             <input
                                                             placeholder= "0.0"
                                                             className= "input-text-materias"
@@ -275,7 +276,7 @@ const Materias = () => {
                                     <div className= "contenedor-mitad-materias">
                                         <div className= "seccion-input" style= {{height: '50px'}}>
                                             <input className= "input-text-materias"
-                                            style= {{width:'35px', marginRight: '10px'}}
+                                            style= {{width:'50px', marginRight: '10px'}}
                                             placeholder= "0.0"
                                             name= "asignarTodos"
                                             onChange= {handleInputAsignar}>

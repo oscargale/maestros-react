@@ -212,7 +212,7 @@ h1, h2, h3, h4, h5, p, label, input {
 
 .tabla td {
   border-bottom: 1px solid rgba(211, 211, 211, 0.397);
-  padding: 8px 5px;
+  padding: 0px 5px;
   font-size: 12px;
 }
 
