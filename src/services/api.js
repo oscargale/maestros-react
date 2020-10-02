@@ -184,6 +184,25 @@ const getCapturaOptional = async(materia) => {
     });
 };
 
+const postCalificacionesOptativas = async(calificaciones) => {
+  const url = `${http.API_END_POINT.BASE}/optional-grades/materias-optativas-calificaciones`;
+  const method = http.METHOD_TYPE.POST;
+
+  const header = {
+    'Content-Type': http.CONTENT_TYPE.APPLICATION_JSON,
+  };
+
+  const token = getToken();
+  if(token) {
+    header['Authorization']=token;
+  }
+
+  return HttpService.request(method, header, calificaciones, url)
+    .then((response) => {
+      return response;
+    });
+};
+
 
 export default {
   postLogin,
@@ -195,4 +214,5 @@ export default {
   getCapturaOptional,
   getFaltas,
   getCapturaFaltas,
+  postCalificacionesOptativas
 };

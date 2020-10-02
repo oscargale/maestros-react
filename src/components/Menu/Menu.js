@@ -31,7 +31,7 @@ const Menu = () => {
                         </div>
                     </div>    
                 </NavLink>
-            </div>
+            </div> */}
             <div>
                 <NavLink activeClassName= "activo" to= "/maestros-react/panel/materias-optativas">
                     <div className= "contenedor-opc">
@@ -40,7 +40,7 @@ const Menu = () => {
                         </div>
                     </div>    
                 </NavLink>
-            </div> */}
+            </div>
         </div>
     );
 };

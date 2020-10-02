@@ -1,7 +1,5 @@
 import Sequelize from 'sequelize';
 import sequelize from '../../../config/sequelize';
-import { validationResult } from 'express-validator/check';
-import moment from 'moment';
 import { Student } from '../user/index';
 
 class GradesController {
@@ -46,12 +44,13 @@ class GradesController {
         }
 
         try {
+            console.log(req.body);
             const config =  await sequelize.getInstanceMssql().query('SELECT semestre_actual FROM MAE_CONFIGURACION', { type: Sequelize.QueryTypes.SELECT });
             const semester = config[0].semestre_actual;
             let meses= null;
             // CONSULTA PARA MESES DE CAPTURA
             if (req.body.Id_Mes_Captura > 0) {
-                if (req.body.idNivel === 4) {
+                if (req.body.Id_Nivel === 4) {
                     meses = await sequelize.getInstanceMssql().query(
                         `Select Id_Mes, Mes from Mae_Mes_Captura Where Id_Status=1 and Periodo=${semester}
                         and Id_Mes=${req.body.Id_Mes_Captura} and Id_Nivel=${req.body.Id_Nivel} Order by Id_Mes`,
@@ -73,10 +72,10 @@ class GradesController {
             }
 
             // NIVEL DE INGLES
-            const condicionMateria= '';
-
+            let condicionMateria= '';
             if (req.body.Id_Nivel_Ingles > 0) { 
                 condicionMateria= ' and A.Id_Nivel_Ingles=' + req.body.Id_Nivel_Ingles;
+                console.log("entro condicion", condicionMateria);
             }
 
             // CAPACITACION
@@ -86,22 +85,21 @@ class GradesController {
 
             // CAMPO CALIFICACIONES
             let campoCalificacion= null;
-
             if (req.body.Id_Mes_Captura < 10){
                 campoCalificacion= "M0" + req.body.Id_Mes_Captura;
             } else { 
                 campoCalificacion= "M" + req.body.Id_Mes_Captura;
             }
 
-            console.log(campoCalificacion);
             // ALUMNOS
             let alumnos= null;
-
             if (req.body.Id_Nivel === 4 && (req.body.Grupo!="A" && req.body.Grupo!="B" && req.body.Grupo!="C" && req.body.Grupo!="D" && req.body.Grupo!="E" && req.body.Grupo!="F") && req.body.Id_Grado === 3) {
-                const especialidad = await sequelize.getInstanceMssql().query(
+                const configEsp = await sequelize.getInstanceMssql().query(
                     `SELECT id_especialidad FROM MAE_MATERIAS WHERE id_materia= '${req.body.Id_Materia}'`,
                     { type: Sequelize.QueryTypes.SELECT }
                 )
+
+                let especialidad= configEsp[0].id_especialidad;
                 
                 alumnos = await sequelize.getInstanceMssql().query(
                     `SELECT A.Ciclo, A.Matricula, A.Numero_Lista, A.Paterno, A.Materno, A.Nombre, A.Grupo, A.Id_Grado, A.Id_Nivel,
@@ -126,7 +124,7 @@ class GradesController {
                     ON A.Grupo = C.Grupo AND A.Id_Grado = C.Id_Grado AND A.Id_Nivel = C.Id_Nivel
                     AND A.Matricula = C.Matricula AND A.Ciclo = C.Ciclo 
                     WHERE (A.Ciclo = '${req.body.Ciclo}') AND (A.Id_Nivel = '${req.body.Id_Nivel}') AND (A.Id_Grado = '${req.body.Id_Grado}') 
-                    AND (A.Grupo = '${req.body.Grupo}') and (A.Id_Status=1) 
+                    AND (A.Grupo = '${req.body.Grupo}') and (A.Id_Status=1) ${condicionMateria} 
                     ORDER BY A.Numero_Lista`,
                     { type: Sequelize.QueryTypes.SELECT }
                 );
@@ -164,7 +162,6 @@ class GradesController {
                         } else { 
                             campoCalificacion= "M" + row.Id_Mes_Captura;
                         }
-                        console.log(campoCalificacion);
 
                         let calificaion= row.Calificacion;
                         let nuevaCalificacion= null;
@@ -175,14 +172,12 @@ class GradesController {
                         } else {
                             nuevaCalificacion= 0;
                         }
-                        console.log(nuevaCalificacion);
 
                         if (row.Id_Nivel === 4) {
                             confPeriodo = semester;
                         } else {
                             confPeriodo= 0;
                         }
-                        console.log(confPeriodo);
 
                         // checa si ya esta registrado el alumno en el mae_calificaciones
                         const dataBusca= await sequelize.getInstanceMssql().query(
@@ -192,7 +187,6 @@ class GradesController {
 
                         let regFind= dataBusca.length;
                         let pQuery= null;
-                        console.log(regFind);
                         //si no esta inserta un registro
                         if (regFind === 0) {
                             pQuery= await sequelize.getInstanceMssql().query(
@@ -202,7 +196,6 @@ class GradesController {
                                 Values (${row.Ciclo}, ${confPeriodo}, ${row.Matricula}, ${row.Id_Nivel}, ${row.Id_Grado}, '${row.Grupo}', 
                                 ${row.Id_Materia}, ${nuevaCalificacion}, 0, 1)`,
                                 { type: Sequelize.QueryTypes.INSERT });
-                            console.log("entro a registro 0");
                         } else {
                             // compara calificacion anterior con la actual para meterlo en bitacora
                             pQuery= await sequelize.getInstanceMssql().query(
@@ -220,7 +213,6 @@ class GradesController {
                                     ${row.Id_Materia}, '${campoCalificacion}', ${regBitacora}, ${nuevaCalificacion})`,
                                     { type: Sequelize.QueryTypes.INSERT }
                                 );
-                                console.log("regBitacora es distinto a nuevaCalicion");
                             }
                             // si ya esta, actualiza mae_calificaciones con los post del formulario
                             pQuery= await sequelize.getInstanceMssql().query(

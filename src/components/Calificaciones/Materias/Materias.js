@@ -211,13 +211,13 @@ const Materias = () => {
                                         <h4 style= {{width: 'auto', top: '0px', marginRight: '10px'}}>
                                             Mes:
                                         </h4>
+                                        <select className= "input-text-materias" name= "CMBMes">
                                             { meses && meses.map( (mes, i) => {
-                                                return (
-                                                    <select className= "input-text-materias" key={mes.Id_Mes} name= "CMBMes">
-                                                        <option>{mes.Mes}</option>
-                                                    </select>
+                                            return (
+                                            <option key={mes.Id_Mes}>{mes.Mes}</option>
                                                 );
                                             })}
+                                        </select> 
                                     </div>
                                 </div>
                             </div>
@@ -242,7 +242,7 @@ const Materias = () => {
                                                         {/* MATRICULA */}
                                                         <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{alumno.Matricula || ''}</td>
                                                         {/* NO. DE LISTA */}
-                                                        <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{alumno.Numero_Lista || ''}</td>
+                                                    <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{alumno.Numero_Lista || ''}</td>
                                                         {/* ALUMNO */}
                                                         <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{alumno.Paterno || ''} {alumno.Materno || ''} {alumno.Nombre || ''}</td>
                                                         {/* CALIFICION */}

@@ -13,14 +13,15 @@ const Materias = () => {
     const [informacion, setInformacion] = useState({
         Grado: null,
         Materia: null,
-        Nivel: null
+        Nivel: null,
+        Materia_Optativa: null
     });
+    const [asignarTodos, setAsignarTodos] = useState(0);
 
     useEffect( () => {
         const initialize = async() => {
             try { 
                 let response = await api.getOptionalGrades();
-                console.log(response);
                 const data = response.data.data;
                 setMaterias(data);
             }catch (e){
@@ -55,7 +56,8 @@ const Materias = () => {
             setInformacion({
                 Grado: dataRow.Id_Grado,
                 Materia: dataRow.Materia,
-                Nivel: dataRow.Nivel
+                Nivel: dataRow.Nivel,
+                Materia_Optativa: dataRow.Materia_Optativa
             });
             funcionAlumnos(dataRow);
         }
@@ -96,14 +98,28 @@ const Materias = () => {
         guardar(alumnos);
     }
 
+    const handleAsignar = (e) => {
+        e.preventDefault();
+        alumnos.forEach(row => {
+            row.Calificacion= asignarTodos;
+        });
+        guardar(alumnos);
+    }
+
+    const handleInputAsignar = (e) => {
+        setAsignarTodos(e.target.value);
+    }
+
     async function guardar (dataAlumnos) {
         try {
-            // const responseGuardar = await api.postCalificaciones(dataAlumnos);
-            // console.log(responseGuardar);
-            // if (responseGuardar) {
-            //     swal("Completado", "Se guardó la informacion con exito", "success");
-            //     return;
-            // }
+            const responseGuardar = await api.postCalificacionesOptativas(dataAlumnos);
+            console.log(responseGuardar);
+            if (responseGuardar) {
+                swal("Completado", "Se guardó la informacion con exito", "success");
+                const dataAlumnos = responseGuardar.data.data;
+                setAlumnos(dataAlumnos);
+                return;
+            }
         } catch (e) {
             if(!e.response && !e.response.data) {
                 swal("Error", "Intente de nuevo más tarde.", "error");
@@ -187,7 +203,7 @@ const Materias = () => {
                                 <h4>
                                     Listado de Alumnos de {informacion.Grado}° de {informacion.Nivel} 
                                     <br/>
-                                    Materia: {informacion.Materia}
+                                    Materia: {informacion.Materia} - {informacion.Materia_Optativa}
                                 </h4>
                             </div>
                             <div className= "contenedor-mitad-materias" >
@@ -195,13 +211,13 @@ const Materias = () => {
                                     <h4 style= {{width: 'auto', top: '0px', marginRight: '10px'}}>
                                         Mes:
                                     </h4>
+                                    <select className= "input-text-materias" name= "CMBMes">
                                     { meses && meses.map( (mes, i) => {
-                                        return (
-                                            <select className= "input-text-materias" key={mes.Id_Mes} name= "CMBMes">
-                                                <option>{mes.Mes}</option>
-                                            </select>
+                                    return (
+                                        <option key={mes.Id_Mes}>{mes.Mes}</option>
                                         );
                                     })}
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -224,11 +240,11 @@ const Materias = () => {
                                                 return (
                                                 <tr key={alumno.Matricula}>
                                                     {/* MATRICULA */}
-                                                    <td style={{borderRight: '3px solid rgb(230, 236, 240)'}}>{alumno.Matricula || ''}</td>
+                                                    <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{alumno.Matricula || ''}</td>
                                                     {/* NO. DE LISTA */}
                                                     <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{alumno.Numero_Lista || ''}</td>
                                                     {/* ALUMNO */}
-                                                    <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{alumno.Nombre || ''} {alumno.Paterno || ''} {alumno.Materno || ''}</td>
+                                                    <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{alumno.Paterno || ''} {alumno.Materno || ''} {alumno.Nombre || ''}</td>
                                                     {/* CALIFICION */}
                                                     <td style= {{width:'200px'}}>
                                                         <input
@@ -257,16 +273,19 @@ const Materias = () => {
                             </div>
                             <div className= "subtitulo-materias" style= {{padding: '0px', height: '80px'}}>
                                 <div className= "contenedor-mitad-materias">
-                                    <div className= "seccion-input" style= {{height: '50px'}}>
-                                        <input className= "input-text-materias disabled" 
-                                        style= {{width:'35px', marginRight: '10px'}}
-                                        placeholder= "0.0"
-                                        disabled>
-                                        </input>
-                                        <button className= "boton-asignar disabled" disabled>
-                                            ASIGNAR A TODOS
-                                        </button>
-                                    </div>
+                                <div className= "seccion-input" style= {{height: '50px'}}>
+                                            <input className= "input-text-materias"
+                                            style= {{width:'50px', marginRight: '10px'}}
+                                            placeholder= "0.0"
+                                            name= "asignarTodos"
+                                            onChange= {handleInputAsignar}>
+                                            </input>
+                                            <button className= "boton-asignar"
+                                            type= "submit"
+                                            onClick= {handleAsignar}>
+                                                ASIGNAR A TODOS
+                                            </button>
+                                        </div>
                                 </div>
                                 <div className= "contenedor-mitad-materias" >
                                     <div className= "seccion-input" style= {{height: '50px'}}>
