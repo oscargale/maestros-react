@@ -23,7 +23,7 @@ const Menu = () => {
                     </div>    
                 </NavLink>
             </div>
-            {/* <div>
+            <div>
                 <NavLink activeClassName= "activo" to= "/maestros-react/panel/faltas">
                     <div className= "contenedor-opc">
                         <div className= "opc">
@@ -31,12 +31,21 @@ const Menu = () => {
                         </div>
                     </div>    
                 </NavLink>
-            </div> */}
+            </div>
             <div>
                 <NavLink activeClassName= "activo" to= "/maestros-react/panel/materias-optativas">
                     <div className= "contenedor-opc">
                         <div className= "opc">
                             Materias Optativas
+                        </div>
+                    </div>    
+                </NavLink>
+            </div>
+            <div>
+                <NavLink activeClassName= "activo" to= "/maestros-react/panel/faltas-optativas">
+                    <div className= "contenedor-opc">
+                        <div className= "opc">
+                            Faltas Optativas
                         </div>
                     </div>    
                 </NavLink>

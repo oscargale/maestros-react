@@ -14,6 +14,7 @@ import InicioPage from './containers/Inicio/Inicio';
 import CalificacionesPage from './containers/Calificaciones/Calificaciones';
 import FaltasPage from './containers/Faltas/Faltas';
 import OptativasPage from './containers/Optativas/Optativas';
+import FaltasOptativasPage from './containers/FaltasOptativas/Faltas';
 
 import './index.css';
 
@@ -27,6 +28,7 @@ ReactDOM.render(
         <Route path='/maestros-react/panel/materias' component= {CalificacionesPage} />
         <Route path='/maestros-react/panel/faltas' component= {FaltasPage} />
         <Route path='/maestros-react/panel/materias-optativas' component= {OptativasPage} />
+        <Route path='/maestros-react/panel/faltas-optativas' component= {FaltasOptativasPage} />
         <Redirect from='/maestros-react/panel' to='/maestros-react/panel/inicio' />
       </Switch>
     </BrowserRouter>,

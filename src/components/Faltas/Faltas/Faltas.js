@@ -17,6 +17,9 @@ const Faltas = () => {
         Materia: null,
         Nivel: null
     });
+    const [asignarTodos, setAsignarTodos] = useState(0);
+    const [infoT, setInfoT] = useState(false);
+    const [teacher, setTeacher] = useState('');
 
     useEffect( () => {
         const initialize = async() => {
@@ -24,6 +27,11 @@ const Faltas = () => {
                 let response = await api.getFaltas();
                 let data = response.data.data;
                 setMateriasFaltas(data);
+
+                // DONCENTE INFO
+                response = await api.getUserInfo();
+                let info = response.data;
+                setInfoT(info);
             }catch (e){
                 if(!e.response && !e.response.data) {
                     swal("Error", "Intente de nuevo más tarde.", "error");
@@ -55,22 +63,23 @@ const Faltas = () => {
                 Grado: dataRow.Grado,
                 Grupo: dataRow.Grupo,
                 Id_Nivel_Ingles: dataRow.Id_Nivel_Ingles,
-                Materia: dataRow.materia,
+                Materia: dataRow.Materia,
                 Nivel: dataRow.Nivel
             });
             funcionAlumnosFaltas(dataRow);
+            console.log(dataRow);
         }
     }
 
     async function funcionAlumnosFaltas (dataRow) {
         try {
             const responseMateria = await api.getCapturaFaltas(dataRow);
-            console.log(responseMateria);
-            // const dataAlumnos = responseMateria.data.data.alumnos;
-            // const dataMeses = responseMateria.data.data.meses;
-            // setAlumnosFaltas(dataAlumnos);
-            // setMeses(dataMeses);
-            // setRegistros(responseMateria.data.data.alumnos.length);
+            const dataAlumnos = responseMateria.data.data.alumnos;
+            const dataMeses = responseMateria.data.data.meses;
+            setAlumnosFaltas(dataAlumnos);
+            setMeses(dataMeses);
+            setRegistros(responseMateria.data.data.alumnos.length);
+            console.log(dataAlumnos);
         } catch (e){
             if(!e.response && !e.response.data) {
                 swal("Error", "Intente de nuevo más tarde.", "error");
@@ -81,15 +90,63 @@ const Faltas = () => {
 
     const handleInputData = (e) => {
         e.preventDefault();
-        let target= e.target.name;
-        let value= e.target.value;
-        let students = [...alumnosFaltas];
-        let student = {
-            ...students[target],
-            Calificacion: value
-        };
-        students[target]= student;
-        setAlumnosFaltas(students);
+        const re = /^\d{1,}(\.\d{0,4})?$/;
+        if (e.target.value === '' || re.test(e.target.value)) {
+            let target= e.target.name;
+            let value= e.target.value;
+            let students = [...alumnosFaltas];
+            let student = {
+                ...students[target],
+                Faltas: value
+            };
+            students[target]= student;
+            setAlumnosFaltas(students);
+            }
+    }
+
+    const handleGuardar = (e) => {
+        e.preventDefault();
+        guardar(alumnosFaltas);
+    }
+
+    const handleAsignar = (e) => {
+        e.preventDefault();
+        alumnosFaltas.forEach(row => {
+            row.Faltas= asignarTodos;
+        });
+        guardar(alumnosFaltas);
+    }
+
+    const handleInputAsignar = (e) => {
+        const re = /^\d{1,}(\.\d{0,4})?$/;
+        if (e.target.value === '' || re.test(e.target.value)) {
+            setAsignarTodos(e.target.value);
+        }
+    }
+
+    async function guardar (dataAlumnos) {
+        try {
+            const responseGuardar = await api.postFaltasOficiales(dataAlumnos);
+            if (responseGuardar) {
+                swal("Completado", "Se guardó la informacion con exito.", "success");
+                const dataAlumnos = responseGuardar.data.data;
+                setAlumnosFaltas(dataAlumnos);
+                return;
+            }
+        } catch (e) {
+            if(!e.response && !e.response.data) {
+                swal("Error", "Intente de nuevo más tarde.", "error");
+                return;
+            }
+        }
+
+    }
+
+    const handleImprimir = (e) => {
+        e.preventDefault();
+        setTeacher(infoT.nombre_completo + " (" + infoT.id_personal + ")");
+        setTimeout(() => window.print(), 1000)
+        setTimeout(() => setTeacher(""), 1000)
     }
 
     return (
@@ -111,7 +168,7 @@ const Faltas = () => {
                                                 <th style={{textAlign:'center'}}><label>NIVEL</label></th>
                                                 <th style={{textAlign:'center'}}><label>GRADO</label></th>
                                                 <th style={{textAlign:'center'}}><label>GRUPO</label></th>
-                                                <th style={{textAlign:'center'}}><label>CALIFICAR</label></th>
+                                                <th style={{textAlign:'center'}}><label>MODIFICAR</label></th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -152,7 +209,7 @@ const Faltas = () => {
             {
                 visibleFaltas &&
                 <div className= "seccion-faltas hover-seccion fade-in">
-                    <div style={{width: '44px', height: 'auto', float: 'right', margin: '3px'}}>
+                    <div className= "seccion-cerrar">
                         <button className= "boton-pencil close" 
                         onClick= {handleCerrar}
                         name= "cerrar">
@@ -160,6 +217,9 @@ const Faltas = () => {
                     </div>
                     <form>
                         <div className= "seccion-centro">
+                            <div className= "seccion-docente-imprimir">
+                                {teacher}
+                            </div>
                             {/* TITULOS */}
                             <div className= "subtitulo-faltas">
                                 <div className= "contenedor-mitad-faltas" >
@@ -174,13 +234,13 @@ const Faltas = () => {
                                         <h4 style= {{width: 'auto', top: '0px', marginRight: '10px'}}>
                                             Mes:
                                         </h4>
+                                        <select className= "input-text-materias" name= "CMBMes">
                                         { meses && meses.map( (mes, i) => {
-                                            return (
-                                                <select className= "input-text-materias" key={mes.Id_Mes} name= "CMBMes">
-                                                    <option>{mes.Mes}</option>
-                                                </select>
+                                        return (
+                                            <option key={mes.Id_Mes}>{mes.Mes}</option>
                                             );
                                         })}
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -192,10 +252,10 @@ const Faltas = () => {
                                         <table className= "tabla-materias">
                                             <thead>
                                                 <tr>
-                                                    <th style={{textAlign:'center', width:'100px'}}><label>MATRICULA</label></th>
+                                                    <th style={{textAlign:'center', width:'100px', borderBottom: '1px solid rgb(230, 236, 240)'}}><label>MATRICULA</label></th>
                                                     <th style={{textAlign:'center', borderRight: '1px solid rgb(230, 236, 240)', borderLeft: '1px solid rgb(230, 236, 240)', borderBottom: '1px solid rgb(230, 236, 240)'}}><label>NO. DE LISTA</label></th>
                                                     <th style={{textAlign:'center', borderRight: '1px solid rgb(230, 236, 240)', borderBottom: '1px solid rgb(230, 236, 240)'}}><label>ALUMNO</label></th>
-                                                    <th style={{textAlign:'center'}}><label>CALIFICACIÓN</label></th>
+                                                    <th style={{textAlign:'center', width:'200px', borderBottom: '1px solid rgb(230, 236, 240)'}}><label>FALTAS</label></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -203,17 +263,17 @@ const Faltas = () => {
                                                     return (
                                                     <tr key={alumno.Matricula}>
                                                         {/* MATRICULA */}
-                                                        <td style={{borderRight: '3px solid rgb(230, 236, 240)'}}>{alumno.Matricula || ''}</td>
+                                                        <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{alumno.Matricula || ''}</td>
                                                         {/* NO. DE LISTA */}
                                                         <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{alumno.Numero_Lista || ''}</td>
                                                         {/* ALUMNO */}
                                                         <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{alumno.Nombre || ''} {alumno.Paterno || ''} {alumno.Materno || ''}</td>
                                                         {/* CALIFICION */}
-                                                        <td style= {{width:'200px'}}>
+                                                        <td className= "seccion-input-centro">
                                                             <input
-                                                            placeholder= "0.0"
+                                                            placeholder= "0.00"
                                                             className= "input-text-materias"
-                                                            value= {alumno.Calificacion || ''}
+                                                            value= {alumno.Faltas || ''}
                                                             onChange= {handleInputData}
                                                             name={i}>
                                                             </input>
@@ -234,14 +294,19 @@ const Faltas = () => {
                                         Total de registros: {registros}
                                     </h4>
                                 </div>
-                                <div className= "subtitulo-faltas" style= {{padding: '0px', height: '80px'}}>
+                                <div className= "subtitulo-faltas imprimir" style= {{padding: '0px', height: '80px'}}>
                                     <div className= "contenedor-mitad-faltas">
                                         <div className= "seccion-input" style= {{height: '50px'}}>
-                                            <input className= "input-text-faltas" 
-                                            style= {{width:'35px', marginRight: '10px'}}
-                                            placeholder= "0">
+                                            <input className= "input-text-materias"
+                                            style= {{width:'50px', marginRight: '10px'}}
+                                            placeholder= "0.00"
+                                            name= "asignarTodos"
+                                            onChange= {handleInputAsignar}
+                                            value= {asignarTodos || ''}>
                                             </input>
-                                            <button className= "boton-asignar" type= "submit">
+                                            <button className= "boton-asignar"
+                                            type= "submit"
+                                            onClick= {handleAsignar}>
                                                 ASIGNAR A TODOS
                                             </button>
                                         </div>
@@ -249,13 +314,16 @@ const Faltas = () => {
                                     <div className= "contenedor-mitad-faltas" >
                                         <div className= "seccion-input" style= {{height: '50px'}}>
                                             <button className= "boton-pencil impresora"
-                                            name= "impresora">
+                                            name= "impresora"
+                                            onClick= {handleImprimir}>
                                             </button>
                                         </div>
                                     </div>
                                 </div>
-                                <div>
-                                    <button className= "boton-guardar" type= "submit">
+                                <div className= "imprimir">
+                                    <button className= "boton-guardar"
+                                    type= "submit"
+                                    onClick={handleGuardar}>
                                         Guardar faltas
                                     </button>
                                 </div>

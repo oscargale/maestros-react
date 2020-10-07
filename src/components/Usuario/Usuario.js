@@ -49,7 +49,7 @@ const Usuario = () => {
                 </div>
             </div>
             <div className= "seccion-informacion hover-subseccion">
-                <div className= "seccion-alumno">
+                <div className= "seccion-docente">
                     <div>
                         <div className="titulo-usuario">
                             Docente:

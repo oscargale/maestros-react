@@ -146,6 +146,25 @@ const getCapturaFaltas = async(materia) => {
     });
 };
 
+const postFaltasOficiales = async(faltas) => {
+  const url = `${http.API_END_POINT.BASE}/faltas-oficiales/faltas-oficiales-faltas`;
+  const method = http.METHOD_TYPE.POST;
+
+  const header = {
+    'Content-Type': http.CONTENT_TYPE.APPLICATION_JSON,
+  };
+
+  const token = getToken();
+  if(token) {
+    header['Authorization']=token;
+  }
+
+  return HttpService.request(method, header, faltas, url)
+    .then((response) => {
+      return response;
+    });
+};
+
 const getOptionalGrades = async(a) => {
   const url = `${http.API_END_POINT.BASE}/optional-grades/materias-optativas`;
   const method = http.METHOD_TYPE.GET;
@@ -203,6 +222,44 @@ const postCalificacionesOptativas = async(calificaciones) => {
     });
 };
 
+const getCapturaFaltasOptional = async(materia) => {
+  const url = `${http.API_END_POINT.BASE}/faltas-optativas/alumnos-faltas-optativas`;
+  const method = http.METHOD_TYPE.POST;
+
+  const header = {
+    'Content-Type': http.CONTENT_TYPE.APPLICATION_JSON,
+  };
+
+  const token = getToken();
+  if(token) {
+    header['Authorization']=token;
+  }
+
+  return HttpService.request(method, header, materia, url)
+    .then((response) => {
+      return response;
+    });
+};
+
+const postFaltasOptativas = async(faltas) => {
+  const url = `${http.API_END_POINT.BASE}/faltas-optativas/materia-faltas-optativas`;
+  const method = http.METHOD_TYPE.POST;
+
+  const header = {
+    'Content-Type': http.CONTENT_TYPE.APPLICATION_JSON,
+  };
+
+  const token = getToken();
+  if(token) {
+    header['Authorization']=token;
+  }
+
+  return HttpService.request(method, header, faltas, url)
+    .then((response) => {
+      return response;
+    });
+};
+
 
 export default {
   postLogin,
@@ -212,7 +269,10 @@ export default {
   postCalificaciones,
   getOptionalGrades,
   getCapturaOptional,
+  postCalificacionesOptativas,
   getFaltas,
   getCapturaFaltas,
-  postCalificacionesOptativas
+  postFaltasOficiales,
+  getCapturaFaltasOptional,
+  postFaltasOptativas
 };

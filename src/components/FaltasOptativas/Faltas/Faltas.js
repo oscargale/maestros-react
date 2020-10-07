@@ -1,9 +1,9 @@
 import React, {useState, useEffect} from 'react';
-import './Materias.css';
+import './Faltas.css';
 import api from '../../../services/api';
 import swal from 'sweetalert';
 
-const Materias = () => {
+const Faltas = () => {
     const [materias, setMaterias] = useState(false);
     const [alumnos, setAlumnos] = useState(false);
     const [meses, setMeses] = useState(false);
@@ -72,7 +72,7 @@ const Materias = () => {
 
     async function funcionAlumnos (dataRow) {
         try {
-            const responseOptativa = await api.getCapturaOptional(dataRow);
+            const responseOptativa = await api.getCapturaFaltasOptional(dataRow);
             console.log(responseOptativa);
             const dataAlumnos = responseOptativa.data.data.alumnos;
             const dataMeses = responseOptativa.data.data.meses;
@@ -90,7 +90,7 @@ const Materias = () => {
     const handleInputData = (e) => {
         e.preventDefault();
         const re = /^\d{1,}(\.\d{0,4})?$/;
-        if (e.target.value === '' || re.test(e.target.value) && (e.target.value > 0 && e.target.value < 11)) {
+        if (e.target.value === '' || re.test(e.target.value)) {
             let target= e.target.name;
             let value= e.target.value;
             let students = [...alumnos];
@@ -118,14 +118,14 @@ const Materias = () => {
 
     const handleInputAsignar = (e) => {
         const re = /^\d{1,}(\.\d{0,4})?$/;
-        if (e.target.value === '' || re.test(e.target.value) && (e.target.value > 0 && e.target.value < 11)) {
+        if (e.target.value === '' || re.test(e.target.value)) {
             setAsignarTodos(e.target.value);
         }
     }
 
     async function guardar (dataAlumnos) {
         try {
-            const responseGuardar = await api.postCalificacionesOptativas(dataAlumnos);
+            const responseGuardar = await api.postFaltasOptativas(dataAlumnos);
             console.log(responseGuardar);
             if (responseGuardar) {
                 swal("Completado", "Se guardó la informacion con exito", "success");
@@ -322,7 +322,7 @@ const Materias = () => {
                                 <button className= "boton-guardar"
                                 type= "submit"
                                 onClick={handleGuardar}>
-                                    Guardar calificaciones
+                                    Guardar faltas
                                 </button>
                             </div>
                         </div>
@@ -334,4 +334,4 @@ const Materias = () => {
     );
 };
 
-export default Materias;
+export default Faltas;

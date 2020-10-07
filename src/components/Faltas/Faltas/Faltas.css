@@ -30,8 +30,8 @@
   
 .tabla-faltas td {
     border-bottom: 1px solid rgba(211, 211, 211, 0.397);
-    padding: 8px 5px;
-    font-size: 12px;
+    padding: 2px 5px;
+    font-size: 14px;
   }
   
 .tabla-faltas tr {
@@ -46,7 +46,7 @@
   
 .tabla-faltas th {
     width: auto;
-    font-size: 14px;
+    font-size: 16px;
     padding: 13px 5px;
     text-align: left;
     background-color: #1a73e8be;

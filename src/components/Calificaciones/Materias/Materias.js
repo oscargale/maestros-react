@@ -18,13 +18,22 @@ const Materias = () => {
         Nivel: null
     });
     const [asignarTodos, setAsignarTodos] = useState(0);
+    const [date, setDate] = useState('');
+    const [infoT, setInfoT] = useState(false);
+    const [teacher, setTeacher] = useState('');
 
     useEffect( () => {
         const initialize = async() => {
             try {
+                // MATERIAS INFO
                 let response = await api.getGrades();
                 const data = response.data.data;
                 setMaterias(data);
+
+                // DONCENTE INFO
+                response = await api.getUserInfo();
+                let info = response.data;
+                setInfoT(info);
             }catch (e){
                 if(!e.response && !e.response.data) {
                     swal("Error", "Intente de nuevo más tarde.", "error");
@@ -81,15 +90,18 @@ const Materias = () => {
 
     const handleInputData = (e) => {
         e.preventDefault();
-        let target= e.target.name;
-        let value= e.target.value;
-        let students = [...alumnos];
-        let student = {
-            ...students[target],
-            Calificacion: value
-        };
-        students[target]= student;
-        setAlumnos(students);
+        const re = /^\d{1,}(\.\d{0,4})?$/;
+        if (e.target.value === '' || re.test(e.target.value) && (e.target.value > 0 && e.target.value < 11)) {
+            let target= e.target.name;
+            let value= e.target.value;
+            let students = [...alumnos];
+            let student = {
+                ...students[target],
+                Calificacion: value
+            };
+            students[target]= student;
+            setAlumnos(students);
+        }
     }
 
     const handleGuardar = (e) => {
@@ -106,7 +118,10 @@ const Materias = () => {
     }
 
     const handleInputAsignar = (e) => {
-        setAsignarTodos(e.target.value);
+        const re = /^\d{1,}(\.\d{0,4})?$/;
+        if (e.target.value === '' || re.test(e.target.value) && (e.target.value > 0 && e.target.value < 11)) {
+            setAsignarTodos(e.target.value);
+        }
     }
 
     async function guardar (dataAlumnos) {
@@ -124,7 +139,15 @@ const Materias = () => {
                 return;
             }
         }
+    }
 
+    const handleImprimir = (e) => {
+        e.preventDefault();
+        setTeacher(infoT.nombre_completo + " (" + infoT.id_personal + ")");
+        // let today= new Date();
+        // let date=today.getDate() + "-"+ parseInt(today.getMonth()+1) +"-"+today.getFullYear();
+        setTimeout(() => window.print(), 1000)
+        setTimeout(() => setTeacher(""), 1000)
     }
 
     return (
@@ -171,7 +194,6 @@ const Materias = () => {
                                                         onClick= {calificar}
                                                         value= {i}
                                                         name= "Calificar">
-                                                            {/* <img src= {pencil} alt= "Calificar" /> */}
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -188,15 +210,17 @@ const Materias = () => {
             {
                 visible &&
                 <div className= "seccion-materias hover-seccion fade-in">
-                    <div style={{width: '44px', height: 'auto', float: 'right', margin: '3px'}}>
+                    <div className= "seccion-cerrar">
                         <button className= "boton-pencil close"
                         onClick= {handleCerrar}
                         name= "cerrar">
-                            {/* <img src= {cerrar} alt= "Cerrar" /> */}
                         </button>
                     </div>
                     <form>
                         <div className= "seccion-centro">
+                            <div className= "seccion-docente-imprimir">
+                                {teacher}
+                            </div>
                             {/* TITULOS */}
                             <div className= "subtitulo-materias">
                                 <div className= "contenedor-mitad-materias" >
@@ -229,10 +253,10 @@ const Materias = () => {
                                         <table className= "tabla-materias">
                                             <thead>
                                                 <tr>
-                                                    <th style={{textAlign:'center', width:'100px'}}><label>MATRICULA</label></th>
+                                                    <th style={{textAlign:'center', borderBottom: '1px solid rgb(230, 236, 240)'}}><label>MATRICULA</label></th>
                                                     <th style={{textAlign:'center', borderRight: '1px solid rgb(230, 236, 240)', borderLeft: '1px solid rgb(230, 236, 240)', borderBottom: '1px solid rgb(230, 236, 240)'}}><label>NO. DE LISTA</label></th>
                                                     <th style={{textAlign:'center', borderRight: '1px solid rgb(230, 236, 240)', borderBottom: '1px solid rgb(230, 236, 240)'}}><label>ALUMNO</label></th>
-                                                    <th style={{textAlign:'center', width:'200px'}}><label>CALIFICACIÓN</label></th>
+                                                    <th style={{textAlign:'center', width:'200px', borderBottom: '1px solid rgb(230, 236, 240)'}}><label>CALIFICACIÓN</label></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -246,10 +270,9 @@ const Materias = () => {
                                                         {/* ALUMNO */}
                                                         <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{alumno.Paterno || ''} {alumno.Materno || ''} {alumno.Nombre || ''}</td>
                                                         {/* CALIFICION */}
-                                                        <td style= {{width:'200px'}}
-                                                        className= "seccion-input-centro">
+                                                    <td className= "seccion-input-centro">
                                                             <input
-                                                            placeholder= "0.0"
+                                                            placeholder= "0.00"
                                                             className= "input-text-materias"
                                                             value= {alumno.Calificacion || ''}
                                                             onChange= {handleInputData}
@@ -272,14 +295,15 @@ const Materias = () => {
                                         Total de registros: {registros}
                                     </h4>
                                 </div>
-                                <div className= "subtitulo-materias" style= {{padding: '0px', height: '80px'}}>
+                                <div className= "subtitulo-materias imprimir" style= {{padding: '0px', height: '80px'}}>
                                     <div className= "contenedor-mitad-materias">
                                         <div className= "seccion-input" style= {{height: '50px'}}>
                                             <input className= "input-text-materias"
                                             style= {{width:'50px', marginRight: '10px'}}
-                                            placeholder= "0.0"
+                                            placeholder= "0.00"
                                             name= "asignarTodos"
-                                            onChange= {handleInputAsignar}>
+                                            onChange= {handleInputAsignar}
+                                            value= {asignarTodos || ''}>
                                             </input>
                                             <button className= "boton-asignar"
                                             type= "submit"
@@ -288,33 +312,40 @@ const Materias = () => {
                                             </button>
                                         </div>
                                     </div>
-                                    <div className= "contenedor-mitad-materias" >
+                                    <div className= "contenedor-mitad-materias imprimir" >
                                         <div className= "seccion-input" style= {{height: '50px'}}>
+                                            <button className= "boton-pencil impresora"
+                                            name= "impresora"
+                                            onClick= {handleImprimir}>
+                                            </button>
+                                        </div>
+                                        {/* <div className= "seccion-input" style= {{height: '50px'}}>
                                             <label style= {{width: 'auto', top: '0px', marginRight: '10px'}}>
                                                 IMPRIMIR:
                                             </label>
-                                            <select className= "input-text-materias disabled" disabled>
-                                                <option>
+                                            <select className= "input-text-materias disabled" 
+                                            onChange= {handleImprimir}>
+                                                <option value= {0}>
 
                                                 </option>
-                                                <option>
+                                                <option value= {1}>
                                                     Lista de asistencia
                                                 </option>
-                                                <option>
+                                                <option value= {2}>
                                                     Calificaciones del ciclo
                                                 </option>
-                                                <option>
+                                                <option value= {3}>
                                                     Calificaciones de mes
                                                 </option>
                                             </select>
-                                        </div>
+                                        </div> */}
                                     </div>
                                 </div>
-                                <div>
+                                <div className= "imprimir">
                                     <button className= "boton-guardar"
                                     type= "submit"
                                     onClick={handleGuardar}>
-                                        Guardar calificaiones
+                                        Guardar calificaciones
                                     </button>
                                 </div>
                             </div>

@@ -5,6 +5,7 @@ import AuthRoutes from './web/auth';
 import OfficialGradesRoutes from './web/official-grades';
 import OptionalGradesRoutes from './web/optional-grades';
 import FaltasOficialesRoutes from './web/faltas-oficiales';
+import FaltasOptativasRoutes from './web/faltas-optativas';
 /*
 import MessageTypeRoutes from './mobile/message-type';
 import FeedRoutes from './mobile/feed';
@@ -24,7 +25,7 @@ router.use('/auth', AuthRoutes);
 router.use('/official-grades', OfficialGradesRoutes);
 router.use('/optional-grades', OptionalGradesRoutes);
 router.use('/faltas-oficiales', FaltasOficialesRoutes);
-
+router.use('/faltas-optativas', FaltasOptativasRoutes);
 
 
 // Error handling
