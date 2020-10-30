@@ -80,7 +80,7 @@ class OptionalGradesController {
         try {
             let config = await sequelize.getInstanceMssql().query(
                 `Select Top 1 ID_MES_CAPTURA From Mae_Personal_Materias 
-                Where Id_Personal = ${req.body.Id_Personal}`,
+                Where Id_Personal = ${req.body.Id_Personal} AND Id_Nivel = ${req.body.Id_Nivel}`,
                 { type: Sequelize.QueryTypes.SELECT }
             );
             const mesCaptura= config[0].ID_MES_CAPTURA;

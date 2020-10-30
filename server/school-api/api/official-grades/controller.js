@@ -7,7 +7,6 @@ class GradesController {
     static async getGrades (req, res, next) {
 
         const teacher = await Student.findByPk(req.user.id_usuario);
-        console.log("teacher", teacher.id_personal);
 
         if(!teacher.id_personal) {
             res.json ({ success: false , message: 'getGrades' });
@@ -44,7 +43,6 @@ class GradesController {
         }
 
         try {
-            console.log(req.body);
             const config =  await sequelize.getInstanceMssql().query('SELECT semestre_actual FROM MAE_CONFIGURACION', { type: Sequelize.QueryTypes.SELECT });
             const semester = config[0].semestre_actual;
             let meses= null;
@@ -75,7 +73,6 @@ class GradesController {
             let condicionMateria= '';
             if (req.body.Id_Nivel_Ingles > 0) { 
                 condicionMateria= ' and A.Id_Nivel_Ingles=' + req.body.Id_Nivel_Ingles;
-                console.log("entro condicion", condicionMateria);
             }
 
             // CAPACITACION
@@ -204,7 +201,6 @@ class GradesController {
                                 { type: Sequelize.QueryTypes.SELECT });
 
                             const regBitacora= pQuery[0].CalActual;
-                            console.log("registro bitacora", regBitacora);
                             if (regBitacora !== nuevaCalificacion) {
                                 pQuery= await sequelize.getInstanceMssql().query(
                                     `INSERT INTO bitacora_calificaciones (Ciclo, Periodo, Matricula, Id_Nivel,
