@@ -195,8 +195,9 @@ const Materias = () => {
     async function funcionCiclo (dataRow) {
         try {
             const responseCiclo = await api.getCalfCiclo(dataRow);
-            const alumnosCiclo = responseCiclo.data.data;
+            const alumnosCiclo = responseCiclo.data.data.alumnos;
             setAlumnosCiclo(alumnosCiclo);
+            console.log(responseCiclo);
         } catch (e){
             if(!e.response && !e.response.data) {
                 swal("Error", "Intente de nuevo más tarde.", "error");
@@ -581,14 +582,14 @@ const Materias = () => {
                                             </label>
                                             <select className= "input-text-materias" 
                                             onChange= {handleSeleccionar}>
-                                                <option value= {1}>
-                                                    Lista de asistencia
+                                                <option value= {3}>
+                                                    Calificaciones de mes
                                                 </option>
                                                 <option value= {2}>
                                                     Calificaciones del ciclo
                                                 </option>
-                                                <option value= {3} selected>
-                                                    Calificaciones de mes
+                                                <option value= {1}>
+                                                    Lista de asistencia
                                                 </option>
                                             </select>
                                             <div className= "seccion-input" style= {{height: '50px', marginLeft: '10px'}}>
