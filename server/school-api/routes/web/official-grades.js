@@ -16,4 +16,8 @@ router.post('/materias-oficiales-calificaciones',
     JwtAuthentication,
     GradesController.postCalificaciones);
 
+router.post('/materias-oficiales-calificaciones-ciclo',
+    JwtAuthentication,
+    GradesController.getCalifCiclo);
+
 export default router;

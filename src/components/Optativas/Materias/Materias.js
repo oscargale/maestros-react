@@ -90,7 +90,7 @@ const Materias = () => {
     const handleInputData = (e) => {
         e.preventDefault();
         const re = /^\d{1,}(\.\d{0,4})?$/;
-        if (e.target.value === '' || re.test(e.target.value) && (e.target.value > 0 && e.target.value < 11)) {
+        if (e.target.value === '' || re.test(e.target.value) && (e.target.value >= 0 && e.target.value < 11)) {
             let target= e.target.name;
             let value= e.target.value;
             let students = [...alumnos];
@@ -118,7 +118,7 @@ const Materias = () => {
 
     const handleInputAsignar = (e) => {
         const re = /^\d{1,}(\.\d{0,4})?$/;
-        if (e.target.value === '' || re.test(e.target.value) && (e.target.value > 0 && e.target.value < 11)) {
+        if (e.target.value === '' || re.test(e.target.value) && (e.target.value >= 0 && e.target.value < 11)) {
             setAsignarTodos(e.target.value);
         }
     }
@@ -302,7 +302,8 @@ const Materias = () => {
                                             onChange= {handleInputAsignar}
                                             value= {asignarTodos || ''}>
                                             </input>
-                                            <button className= "boton-asignar"
+                                            <button className= {!asignarTodos ? "boton-asignar disabled" : "boton-asignar"}
+                                            disabled= {!asignarTodos}
                                             type= "submit"
                                             onClick= {handleAsignar}>
                                                 ASIGNAR A TODOS

@@ -231,6 +231,65 @@ class GradesController {
         }
     }
 
+    static async getCalifCiclo (req, res, next) {
+        if(!req.body) {
+            res.json ({ success: false , message: 'error data' });
+            return;
+        }
+
+        try {
+            const config =  await sequelize.getInstanceMssql().query('SELECT semestre_actual FROM MAE_CONFIGURACION', { type: Sequelize.QueryTypes.SELECT });
+            const semester = config[0].semestre_actual;
+
+            // NIVEL DE INGLES
+            let condicionMateria= '';
+            if (req.body.Id_Nivel_Ingles > 0) { 
+                condicionMateria= ' and A.Id_Nivel_Ingles=' + req.body.Id_Nivel_Ingles;
+            }
+
+            // CAPACITACION
+            if (req.body.Capacitacion > 0) {
+                condicionMateria= ' and A.Capacitacion= ' + req.body.Capacitacion;
+            }
+
+            // ALUMNOS
+            let alumnos= null;
+            if (req.body.Id_Nivel === 4 && (req.body.Grupo!="A" && req.body.Grupo!="B" && req.body.Grupo!="C" && req.body.Grupo!="D" && req.body.Grupo!="E" && req.body.Grupo!="F") && req.body.Id_Grado === 3) {
+                const configEsp = await sequelize.getInstanceMssql().query(
+                    `SELECT id_especialidad FROM MAE_MATERIAS WHERE id_materia= '${req.body.Id_Materia}'`,
+                    { type: Sequelize.QueryTypes.SELECT }
+                )
+
+                let especialidad= configEsp[0].id_especialidad;
+                
+                alumnos = await sequelize.getInstanceMssql().query(
+                    `SELECT A.Ciclo, A.Matricula, A.Numero_Lista, A.Paterno, A.Materno, A.Nombre, C.Id_Materia,
+                    C.M01, C.M02, C.M03, C.M04, C.M05, C.M06, C.M07, C.M08, C.M09, C.M10, C.Promedio_Mensual, C.Examen_Final, C.Promedio_Final 
+                    FROM MAE_ALUMNOS A LEFT OUTER JOIN (Select * From MAE_CALIFICACIONES Where 
+                    Id_Materia = '${req.body.Id_Materia}') C ON A.Grupo = C.Grupo AND A.Id_Grado = C.Id_Grado AND A.Id_Nivel = C.Id_Nivel AND A.Matricula = C.Matricula AND A.Ciclo = C.Ciclo 
+                    WHERE (A.Ciclo = '${req.body.Ciclo}') AND (A.Id_Nivel = '${req.body.Id_Nivel}') AND (A.Id_Grado = '${req.body.Id_Grado}') AND 
+                    (A.id_especialidad = '${especialidad}') and (A.Id_Status=1) ${condicionMateria} ORDER BY A.Numero_Lista"`,
+                    { type: Sequelize.QueryTypes.SELECT }
+                );
+            } else {
+                alumnos = await sequelize.getInstanceMssql().query(
+                    `SELECT A.Ciclo, A.Matricula, A.Numero_Lista, A.Paterno, A.Materno, A.Nombre, C.Id_Materia,
+                    C.M01, C.M02, C.M03, C.M04, C.M05, C.M06, C.M07, C.M08, C.M09, C.M10, C.Promedio_Mensual, C.Examen_Final, C.Promedio_Final 
+                    FROM MAE_ALUMNOS A LEFT OUTER JOIN (Select * From MAE_CALIFICACIONES Where 
+  		            Id_Materia = '${req.body.Id_Materia}') C ON A.Grupo = C.Grupo AND A.Id_Grado = C.Id_Grado AND A.Id_Nivel = C.Id_Nivel AND A.Matricula = C.Matricula AND A.Ciclo = C.Ciclo 
+                    WHERE (A.Ciclo = '${req.body.Ciclo}') AND (A.Id_Nivel = '${req.body.Id_Nivel}') AND (A.Id_Grado = '${req.body.Id_Grado}') AND 
+  			        (A.Grupo = '${req.body.Grupo}') and (A.Id_Status=1) ${condicionMateria} ORDER BY A.Numero_Lista`,
+                    { type: Sequelize.QueryTypes.SELECT }
+                );
+            }
+
+            res.json ({ success: true , message: 'getCalifCiclo', data: {alumnos} });
+        } catch(error){
+          console.log(error);
+          res.json ({ success: false , message: 'getCalifCiclo', error });
+        }
+    }
+
 }
 
 export default GradesController;

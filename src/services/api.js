@@ -108,6 +108,25 @@ const postCalificaciones = async(calificaciones) => {
     });
 };
 
+const getCalfCiclo = async(materia) => {
+  const url = `${http.API_END_POINT.BASE}/official-grades/materias-oficiales-calificaciones-ciclo`;
+  const method = http.METHOD_TYPE.POST;
+
+  const header = {
+    'Content-Type': http.CONTENT_TYPE.APPLICATION_JSON,
+  };
+
+  const token = getToken();
+  if(token) {
+    header['Authorization']=token;
+  }
+
+  return HttpService.request(method, header, materia, url)
+    .then((response) => {
+      return response;
+    });
+};
+
 const getFaltas = async(a) => {
   const url = `${http.API_END_POINT.BASE}/faltas-oficiales/faltas`;
   const method = http.METHOD_TYPE.GET;
@@ -267,6 +286,7 @@ export default {
   getGrades,
   getCaptura,
   postCalificaciones,
+  getCalfCiclo,
   getOptionalGrades,
   getCapturaOptional,
   postCalificacionesOptativas,

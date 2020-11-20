@@ -297,14 +297,15 @@ const Faltas = () => {
                                 <div className= "subtitulo-faltas imprimir" style= {{padding: '0px', height: '80px'}}>
                                     <div className= "contenedor-mitad-faltas">
                                         <div className= "seccion-input" style= {{height: '50px'}}>
-                                            <input className= "input-text-materias"
+                                            <input className= "input-text-materias" maxLength= "3"
                                             style= {{width:'50px', marginRight: '10px'}}
                                             placeholder= "0.00"
                                             name= "asignarTodos"
                                             onChange= {handleInputAsignar}
                                             value= {asignarTodos || ''}>
                                             </input>
-                                            <button className= "boton-asignar"
+                                            <button className= {!asignarTodos ? "boton-asignar disabled" : "boton-asignar"}
+                                            disabled= {!asignarTodos}
                                             type= "submit"
                                             onClick= {handleAsignar}>
                                                 ASIGNAR A TODOS
