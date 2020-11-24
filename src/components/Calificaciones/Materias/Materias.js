@@ -34,7 +34,6 @@ const Materias = () => {
                 let response = await api.getGrades();
                 const data = response.data.data;
                 setMaterias(data);
-                console.log("materias ", materias);
 
                 // DONCENTE INFO
                 response = await api.getUserInfo();
@@ -164,11 +163,9 @@ const Materias = () => {
         if (valor === '1') {
             setCalificacionesCiclo(false);
             setListaAsistencia(true);
-            console.log(listaAsistencia);
         } else if (valor === '2') {
             setListaAsistencia(false);
             setCalificacionesCiclo(true);
-            console.log(calificacionesCiclo);
         } else if (valor === '3') {
             setListaAsistencia(false);
             setCalificacionesCiclo(false);
@@ -197,7 +194,6 @@ const Materias = () => {
             const responseCiclo = await api.getCalfCiclo(dataRow);
             const alumnosCiclo = responseCiclo.data.data.alumnos;
             setAlumnosCiclo(alumnosCiclo);
-            console.log(responseCiclo);
         } catch (e){
             if(!e.response && !e.response.data) {
                 swal("Error", "Intente de nuevo más tarde.", "error");

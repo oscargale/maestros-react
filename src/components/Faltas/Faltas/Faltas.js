@@ -67,7 +67,6 @@ const Faltas = () => {
                 Nivel: dataRow.Nivel
             });
             funcionAlumnosFaltas(dataRow);
-            console.log(dataRow);
         }
     }
 
@@ -79,7 +78,6 @@ const Faltas = () => {
             setAlumnosFaltas(dataAlumnos);
             setMeses(dataMeses);
             setRegistros(responseMateria.data.data.alumnos.length);
-            console.log(dataAlumnos);
         } catch (e){
             if(!e.response && !e.response.data) {
                 swal("Error", "Intente de nuevo más tarde.", "error");

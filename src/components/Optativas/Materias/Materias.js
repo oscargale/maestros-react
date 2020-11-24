@@ -73,7 +73,6 @@ const Materias = () => {
     async function funcionAlumnos (dataRow) {
         try {
             const responseOptativa = await api.getCapturaOptional(dataRow);
-            console.log(responseOptativa);
             const dataAlumnos = responseOptativa.data.data.alumnos;
             const dataMeses = responseOptativa.data.data.meses;
             setAlumnos(dataAlumnos);
@@ -126,7 +125,6 @@ const Materias = () => {
     async function guardar (dataAlumnos) {
         try {
             const responseGuardar = await api.postCalificacionesOptativas(dataAlumnos);
-            console.log(responseGuardar);
             if (responseGuardar) {
                 swal("Completado", "Se guardó la informacion con exito", "success");
                 const dataAlumnos = responseGuardar.data.data;
