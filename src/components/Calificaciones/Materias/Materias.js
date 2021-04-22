@@ -20,7 +20,7 @@ const Materias = () => {
         Nivel: null
     });
     const [asignarTodos, setAsignarTodos] = useState(0);
-    const [date, setDate] = useState('');
+    // const [pass, setPass] = useState(true);
     const [infoT, setInfoT] = useState(false);
     const [teacher, setTeacher] = useState('');
     const [title, setTitle] = useState('');
@@ -111,6 +111,7 @@ const Materias = () => {
             students[target]= student;
             setAlumnos(students);
         }
+        
     }
 
     const handleGuardar = (e) => {
@@ -135,14 +136,29 @@ const Materias = () => {
     }
 
     async function guardar (dataAlumnos) {
+        let pass = 0;
         try {
-            const responseGuardar = await api.postCalificaciones(dataAlumnos);
-            if (responseGuardar) {
-                swal("Completado", "Se guardó la informacion con exito.", "success");
-                const dataAlumnos = responseGuardar.data.data;
-                setAlumnos(dataAlumnos);
-                setAsignarTodos('');
-                return;
+            for (let row of dataAlumnos) {
+                console.log(row.Calificacion);
+                if (row.Calificacion <=4 && row.Calificacion >= 0) {
+                    pass = 1;
+                    break;
+                }
+            }
+            switch (pass) {
+                case 0:
+                    const responseGuardar = await api.postCalificaciones(dataAlumnos);
+                    if (responseGuardar) {
+                        swal("Completado", "Se guardó la informacion con exito.", "success");
+                        const dataAlumnos = responseGuardar.data.data;
+                        setAlumnos(dataAlumnos);
+                        setAsignarTodos('');
+                        return;
+                    } 
+                    break;
+                case 1:
+                    swal("Intentelo de nuevo", "La calificación no puede ser menor a 5.", "error");
+                    break;
             }
         } catch (e) {
             if(!e.response && !e.response.data) {
