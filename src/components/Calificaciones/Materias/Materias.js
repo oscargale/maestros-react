@@ -26,6 +26,7 @@ const Materias = () => {
     const [title, setTitle] = useState('');
     const [listaAsistencia, setListaAsistencia] = useState(false);
     const [calificacionesCiclo, setCalificacionesCiclo] = useState(false);
+    const [habilitarBoton, setHabilitarBoton] = useState(false);
 
     useEffect( () => {
         const initialize = async() => {
@@ -86,6 +87,11 @@ const Materias = () => {
             const responseMateria = await api.getCaptura(dataRow);
             const dataAlumnos = responseMateria.data.data.alumnos;
             const dataMeses = responseMateria.data.data.meses;
+            if (dataMeses.length === 0) {
+                setHabilitarBoton(false);
+            } else {
+                setHabilitarBoton(true);
+            }
             setAlumnos(dataAlumnos);
             setMeses(dataMeses);
             setRegistros(responseMateria.data.data.alumnos.length);
@@ -305,18 +311,21 @@ const Materias = () => {
                                         </h4>
                                     </div>
                                     <div className= "contenedor-mitad-materias" >
-                                        <div className= "seccion-input">
-                                            <h4 style= {{width: 'auto', top: '0px', marginRight: '10px'}}>
-                                                Mes:
-                                            </h4>
-                                            <select className= "input-text-materias" name= "CMBMes">
-                                                { meses && meses.map( (mes, i) => {
-                                                return (
-                                                <option key={mes.Id_Mes}>{mes.Mes}</option>
-                                                    );
-                                                })}
-                                            </select> 
-                                        </div>
+                                        {
+                                            habilitarBoton &&
+                                            <div className= "seccion-input">
+                                                <h4 style= {{width: 'auto', top: '0px', marginRight: '10px'}}>
+                                                    Mes:
+                                                </h4>
+                                                <select className= "input-text-materias" name= "CMBMes">
+                                                    { meses && meses.map( (mes, i) => {
+                                                    return (
+                                                    <option key={mes.Id_Mes}>{mes.Mes}</option>
+                                                        );
+                                                    })}
+                                                </select> 
+                                            </div>
+                                        }
                                     </div>
                                 </div>
                                 {/* TABLA */}
@@ -569,22 +578,27 @@ const Materias = () => {
                                 <div className= "subtitulo-materias imprimir" style= {{padding: '0px', height: '80px'}}>
                                     {
                                         !listaAsistencia && !calificacionesCiclo &&
-                                        <div className= "contenedor-mitad-materias fade-in">
-                                            <div className= "seccion-input" style= {{height: '50px'}}>
-                                                <input className= "input-text-materias"
-                                                style= {{width:'50px', marginRight: '10px'}}
-                                                placeholder= "0.00"
-                                                name= "asignarTodos"
-                                                onChange= {handleInputAsignar}
-                                                value= {asignarTodos || ''}>
-                                                </input>
-                                                <button className= {!asignarTodos ? "boton-asignar disabled" : "boton-asignar"}
-                                                disabled= {!asignarTodos}
-                                                type= "submit"
-                                                onClick= {handleAsignar}>
-                                                    ASIGNAR A TODOS
-                                                </button>
-                                            </div>
+                                        <div>
+                                            {
+                                                habilitarBoton &&
+                                                <div className= "contenedor-mitad-materias fade-in">
+                                                    <div className= "seccion-input" style= {{height: '50px'}}>
+                                                        <input className= "input-text-materias"
+                                                        style= {{width:'50px', marginRight: '10px'}}
+                                                        placeholder= "0.00"
+                                                        name= "asignarTodos"
+                                                        onChange= {handleInputAsignar}
+                                                        value= {asignarTodos || ''}>
+                                                        </input>
+                                                        <button className= {!asignarTodos ? "boton-asignar disabled" : "boton-asignar"}
+                                                        disabled= {!asignarTodos}
+                                                        type= "submit"
+                                                        onClick= {handleAsignar}>
+                                                            ASIGNAR A TODOS
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            }
                                         </div>
                                     }                                    
                                     <div className= "contenedor-mitad-materias imprimir" >
@@ -615,12 +629,17 @@ const Materias = () => {
                                 </div>
                                 { 
                                     !listaAsistencia && !calificacionesCiclo &&
-                                    <div className= "imprimir fade-in">
-                                        <button className= "boton-guardar"
-                                        type= "submit"
-                                        onClick={handleGuardar}>
-                                            Guardar calificaciones
-                                        </button>
+                                    <div>
+                                        {
+                                            habilitarBoton &&
+                                            <div className= "imprimir fade-in">
+                                                <button className= "boton-guardar"
+                                                type= "submit"
+                                                onClick={handleGuardar}>
+                                                    Guardar calificaciones
+                                                </button>
+                                            </div>
+                                        }
                                     </div>
                                 }
                             </div>

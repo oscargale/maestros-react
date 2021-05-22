@@ -19,6 +19,7 @@ const Faltas = () => {
     const [asignarTodos, setAsignarTodos] = useState(0);
     const [infoT, setInfoT] = useState(false);
     const [teacher, setTeacher] = useState('');
+    const [habilitarBoton, setHabilitarBoton] = useState(false);
 
     useEffect( () => {
         const initialize = async() => {
@@ -75,6 +76,11 @@ const Faltas = () => {
             const responseOptativa = await api.getCapturaFaltasOptional(dataRow);
             const dataAlumnos = responseOptativa.data.data.alumnos;
             const dataMeses = responseOptativa.data.data.meses;
+            if (dataMeses.length === 0) {
+                setHabilitarBoton(false);
+            } else {
+                setHabilitarBoton(true);
+            }
             setAlumnos(dataAlumnos);
             setMeses(dataMeses);
             setRegistros(responseOptativa.data.data.alumnos.length);
@@ -226,18 +232,21 @@ const Faltas = () => {
                                 </h4>
                             </div>
                             <div className= "contenedor-mitad-materias" >
-                                <div className= "seccion-input">
-                                    <h4 style= {{width: 'auto', top: '0px', marginRight: '10px'}}>
-                                        Mes:
-                                    </h4>
-                                    <select className= "input-text-materias" name= "CMBMes">
-                                    { meses && meses.map( (mes, i) => {
-                                    return (
-                                        <option key={mes.Id_Mes}>{mes.Mes}</option>
-                                        );
-                                    })}
-                                    </select>
-                                </div>
+                                {
+                                    habilitarBoton &&
+                                    <div className= "seccion-input">
+                                        <h4 style= {{width: 'auto', top: '0px', marginRight: '10px'}}>
+                                            Mes:
+                                        </h4>
+                                        <select className= "input-text-materias" name= "CMBMes">
+                                        { meses && meses.map( (mes, i) => {
+                                        return (
+                                            <option key={mes.Id_Mes}>{mes.Mes}</option>
+                                            );
+                                        })}
+                                        </select>
+                                    </div>
+                                }
                             </div>
                         </div>
                         {/* TABLA */}
@@ -291,8 +300,10 @@ const Faltas = () => {
                                 </h4>
                             </div>
                             <div className= "subtitulo-materias imprimir" style= {{padding: '0px', height: '80px'}}>
-                                <div className= "contenedor-mitad-materias">
-                                <div className= "seccion-input" style= {{height: '50px'}}>
+                                {
+                                    habilitarBoton &&
+                                    <div className= "contenedor-mitad-materias">
+                                        <div className= "seccion-input" style= {{height: '50px'}}>
                                             <input className= "input-text-materias" maxLength= "3"
                                             style= {{width:'50px', marginRight: '10px'}}
                                             placeholder= "0.00"
@@ -307,7 +318,8 @@ const Faltas = () => {
                                                 ASIGNAR A TODOS
                                             </button>
                                         </div>
-                                </div>
+                                    </div>
+                                }
                                 <div className= "contenedor-mitad-materias" >
                                     <div className= "seccion-input" style= {{height: '50px'}}>
                                         <button className= "boton-pencil impresora" 
@@ -317,15 +329,19 @@ const Faltas = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className= "imprimir">
-                                <button className= "boton-guardar"
-                                type= "submit"
-                                onClick={handleGuardar}>
-                                    Guardar faltas
-                                </button>
+                            <div>
+                                {
+                                    habilitarBoton &&
+                                    <div className= "imprimir">
+                                        <button className= "boton-guardar"
+                                        type= "submit"
+                                        onClick={handleGuardar}>
+                                            Guardar faltas
+                                        </button>
+                                    </div>
+                                }
                             </div>
                         </div>
-                        
                     </div>
                 </div>
             }
