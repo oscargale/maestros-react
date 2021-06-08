@@ -17,7 +17,8 @@ const Materias = () => {
         Grupo: null,
         Id_Nivel_Ingles: null,
         Materia: null,
-        Nivel: null
+        Nivel: null,
+        Id_Nivel: null
     });
     const [asignarTodos, setAsignarTodos] = useState(0);
     // const [pass, setPass] = useState(true);
@@ -75,7 +76,8 @@ const Materias = () => {
                 Grupo: dataRow.Grupo,
                 Id_Nivel_Ingles: dataRow.Id_Nivel_Ingles,
                 Materia: dataRow.Materia,
-                Nivel: dataRow.Nivel
+                Nivel: dataRow.Nivel,
+                Id_Nivel: dataRow.Id_Nivel
             });
             funcionAlumnos(dataRow);
             funcionCiclo(dataRow);
@@ -144,13 +146,15 @@ const Materias = () => {
     async function guardar (dataAlumnos) {
         let pass = 0;
         try {
-            for (let row of dataAlumnos) {
-                console.log(row.Calificacion);
-                if (row.Calificacion <=4 && row.Calificacion >= 0) {
-                    pass = 1;
-                    break;
+            if (informacion.Id_Nivel !== 4) {
+                for (let row of dataAlumnos) {
+                    if (row.Calificacion <=4 && row.Calificacion >= 0) {
+                        pass = 1;
+                        break;
+                    }
                 }
             }
+            
             switch (pass) {
                 case 0:
                     const responseGuardar = await api.postCalificaciones(dataAlumnos);
