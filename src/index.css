@@ -309,12 +309,12 @@ h1, h2, h3, h4, h5, p, label, input {
     border: none;
   }
 
-  .header-calificaciones {
+  .header-calificaciones,
+  .header-materias {
     display: none;
   }
 
-  .header-faltas,
-  .header-materias {
+  .header-faltas {
     width: auto;
     height: 50px;
     font-size: 15px;

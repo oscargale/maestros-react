@@ -435,7 +435,7 @@ const Materias = () => {
                                             <table className= "tabla-materias">
                                                 <thead>
                                                     <tr>
-                                                        <th colspan="13" style={{padding: '0px 5px', borderRight: '1px solid rgb(230, 236, 240)', borderBottom: '1px solid rgb(230, 236, 240)'}}>&nbsp;</th>
+                                                        <th colSpan="13" style={{padding: '0px 5px', borderRight: '1px solid rgb(230, 236, 240)', borderBottom: '1px solid rgb(230, 236, 240)'}}>&nbsp;</th>
                                                         <th align="center" style={{padding: '0px 5px', borderRight: '1px solid rgb(230, 236, 240)'}} title="Promedio Mensual">Prom.</th>
                                                         <th align="center" style={{padding: '0px 5px', borderRight: '1px solid rgb(230, 236, 240)'}} title="Exámen Final">Examen</th>
                                                         <th align="center" style={{padding: '0px 5px'}} title="Promedio Final">Prom.</th>

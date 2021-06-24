@@ -7,6 +7,7 @@ const Materias = () => {
     const [materias, setMaterias] = useState(false);
     const [alumnos, setAlumnos] = useState(false);
     const [meses, setMeses] = useState(false);
+    const [alumnosCiclo, setAlumnosCiclo] = useState(false);
     const [registros, setRegistros] = useState(0);
     const [visible, setVisible] = useState(false);
     const [contador, setContador] = useState(0);
@@ -19,6 +20,8 @@ const Materias = () => {
     const [asignarTodos, setAsignarTodos] = useState(0);
     const [infoT, setInfoT] = useState(false);
     const [teacher, setTeacher] = useState('');
+    const [title, setTitle] = useState('');
+    const [calificacionesCiclo, setCalificacionesCiclo] = useState(false);
     const [habilitarBoton, setHabilitarBoton] = useState(false);
 
     useEffect( () => {
@@ -44,13 +47,13 @@ const Materias = () => {
 
     }, []);
 
-
-
     const handleCerrar = () => {
         if (visible === true && contador === 1) {
             setVisible(false);
             setContador(0);
             setAlumnos(false);
+            setCalificacionesCiclo(false);
+            setAsignarTodos('');
         }
     }
 
@@ -68,6 +71,7 @@ const Materias = () => {
                 Materia_Optativa: dataRow.Materia_Optativa
             });
             funcionAlumnos(dataRow);
+            funcionCiclo(dataRow);
         }
     }
 
@@ -84,6 +88,19 @@ const Materias = () => {
             setAlumnos(dataAlumnos);
             setMeses(dataMeses);
             setRegistros(responseOptativa.data.data.alumnos.length);
+        } catch (e){
+            if(!e.response && !e.response.data) {
+                swal("Error", "Intente de nuevo más tarde.", "error");
+                return;
+            }
+        }
+    }
+
+    async function funcionCiclo (dataRow) {
+        try {
+            const responseCiclo = await api.postCalificacionesOptativasCiclo(dataRow);
+            const alumnosCiclo = responseCiclo.data.data.alumnos;
+            setAlumnosCiclo(alumnosCiclo);
         } catch (e){
             if(!e.response && !e.response.data) {
                 swal("Error", "Intente de nuevo más tarde.", "error");
@@ -167,11 +184,41 @@ const Materias = () => {
         }
     }
 
-    const handleImprimir = (e) => {
+    /*const handleImprimir = (e) => {
         e.preventDefault();
         setTeacher(infoT.nombre_completo + " (" + infoT.id_personal + ")");
         setTimeout(() => window.print(), 1000)
         setTimeout(() => setTeacher(""), 1000)
+    }*/
+
+    const [imprimir, setImprimir] = useState(3);
+
+    const handleSeleccionar = (e) => {
+        e.preventDefault();
+        let valor = e.target.value;
+        setImprimir(valor);
+        if (valor === '2') {
+            setCalificacionesCiclo(true);
+        } else if (valor === '1') {
+            setCalificacionesCiclo(false);
+        }
+        
+    }
+
+    const handleImprimir = (e) => {
+        e.preventDefault();
+        setTitle("Calificaciones del Mes");
+        if (imprimir === '1') {
+            setTitle("Lista de Asistencia");
+        } else if (imprimir === '2') {
+            setTitle("Calificaciones del Ciclo");
+        } else if (imprimir === '3') {
+            setTitle("Calificaciones del Mes");
+        }
+        setTeacher(infoT.nombre_completo + " (" + infoT.id_personal + ")");
+        setTimeout(() => window.print(), 1000)
+        setTimeout(() => setTeacher(""), 1000)
+        setTimeout(() => setTitle(""), 1000)
     }
 
     return (
@@ -240,81 +287,175 @@ const Materias = () => {
                         name= "cerrar">
                         </button>
                     </div>
-                    <div className= "seccion-centro">
-                        <div className= "seccion-docente-imprimir">
-                            {teacher}
-                        </div>
-                        {/* TITULOS */}
-                        <div className= "subtitulo-materias">
-                            <div className= "contenedor-mitad-materias" >
-                                <h4>
-                                    Listado de Alumnos de {informacion.Grado}° de {informacion.Nivel} 
-                                    <br/>
-                                    Materia: {informacion.Materia} - {informacion.Materia_Optativa}
-                                </h4>
+                    {/* CALIFICACIONES DEL CICLO */}
+                    {
+                        calificacionesCiclo &&
+                        <div className= "seccion-centro">
+                            <div className= "seccion-docente-imprimir-titulo">
+                                <h2>{title || ''}</h2>
                             </div>
-                            <div className= "contenedor-mitad-materias" >
-                                {
-                                    habilitarBoton &&
-                                    <div className= "seccion-input">
-                                        <h4 style= {{width: 'auto', top: '0px', marginRight: '10px'}}>
-                                            Mes:
-                                        </h4>
-                                        <select className= "input-text-materias" name= "CMBMes">
-                                        { meses && meses.map( (mes, i) => {
-                                        return (
-                                            <option key={mes.Id_Mes}>{mes.Mes}</option>
-                                            );
-                                        })}
-                                        </select>
-                                    </div>
-                                }
-                                
+                            <div className= "seccion-docente-imprimir">
+                                {teacher || ''}
                             </div>
-                        </div>
-                        {/* TABLA */}
-                        <div className= "seccion-tabla-materias">
-                            <div className= "hover-elemento">
-                                {/* TABLA */}
-                                <div className= "contenedor-tabla-materias">
-                                    <table className= "tabla-materias">
-                                        <thead>
-                                            <tr>
-                                                <th style={{textAlign:'center', width:'100px', borderBottom: '1px solid rgb(230, 236, 240)'}}><label>MATRICULA</label></th>
-                                                <th style={{textAlign:'center', borderRight: '1px solid rgb(230, 236, 240)', borderLeft: '1px solid rgb(230, 236, 240)', borderBottom: '1px solid rgb(230, 236, 240)'}}><label>NO. DE LISTA</label></th>
-                                                <th style={{textAlign:'center', borderRight: '1px solid rgb(230, 236, 240)', borderBottom: '1px solid rgb(230, 236, 240)'}}><label>ALUMNO</label></th>
-                                                <th style={{textAlign:'center', width:'100px', borderBottom: '1px solid rgb(230, 236, 240)'}}><label>CALIFICACIÓN</label></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            { alumnos && alumnos.map( (alumno, i) => {
-                                                return (
-                                                <tr key={alumno.Matricula}>
-                                                    {/* MATRICULA */}
-                                                    <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{alumno.Matricula || ''}</td>
-                                                    {/* NO. DE LISTA */}
-                                                    <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{alumno.Numero_Lista || ''}</td>
-                                                    {/* ALUMNO */}
-                                                    <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{alumno.Paterno || ''} {alumno.Materno || ''} {alumno.Nombre || ''}</td>
-                                                    {/* CALIFICION */}
-                                                    <td className= "seccion-input-centro">
-                                                        <input
-                                                        placeholder= "0.00"
-                                                        className= "input-text-materias"
-                                                        value= {alumno.Calificacion || ''}
-                                                        onChange= {handleInputData}
-                                                        name={i}>
-                                                        </input>
-                                                    </td>
+                            {/* TITULOS */}
+                            <div className= "subtitulo-materias">
+                                <div className= "contenedor-mitad-materias" >
+                                    <h4>
+                                        Listado de Alumnos de {informacion.Grado || ''} {informacion.Grupo || ''} de {informacion.Nivel || ''}
+                                        <br/>
+                                        Materia: {informacion.Materia || ''}
+                                    </h4>
+                                </div>
+                            </div>
+                            {/* TABLA */}
+                            <div className= "seccion-tabla-materias">
+                                <div className= "hover-elemento">
+                                    {/* TABLA */}
+                                    <div className= "contenedor-tabla-materias">
+                                        <table className= "tabla-materias">
+                                            <thead>
+                                                <tr>
+                                                    <th colSpan="13" style={{padding: '0px 5px', borderRight: '1px solid rgb(230, 236, 240)', borderBottom: '1px solid rgb(230, 236, 240)'}}>&nbsp;</th>
+                                                    <th align="center" style={{padding: '0px 5px', borderRight: '1px solid rgb(230, 236, 240)'}} title="Promedio Mensual">Prom.</th>
+                                                    <th align="center" style={{padding: '0px 5px', borderRight: '1px solid rgb(230, 236, 240)'}} title="Exámen Final">Examen</th>
+                                                    <th align="center" style={{padding: '0px 5px'}} title="Promedio Final">Prom.</th>
                                                 </tr>
-                                                );
-                                            })}
-                                        </tbody>
-                                    </table>
+                                                <tr>
+                                                    <th width="7%" style= {{borderRight: '1px solid rgb(230, 236, 240)', borderBottom: '1px solid rgb(230, 236, 240)'}}>Matrícula</th>
+                                                    <th width="4%" align="center" style= {{borderRight: '1px solid rgb(230, 236, 240)', borderBottom: '1px solid rgb(230, 236, 240)'}}>Lista</th>
+                                                    <th width="30%" style= {{borderRight: '1px solid rgb(230, 236, 240)', borderBottom: '1px solid rgb(230, 236, 240)'}}>Nombre</th>
+                                                    <th width="4%" align="center" style= {{borderRight: '1px solid rgb(230, 236, 240)', borderBottom: '1px solid rgb(230, 236, 240)'}}>Sep</th>
+                                                    <th width="4%" align="center" style= {{borderRight: '1px solid rgb(230, 236, 240)', borderBottom: '1px solid rgb(230, 236, 240)'}}>Oct</th>
+                                                    <th width="4%" align="center" style= {{borderRight: '1px solid rgb(230, 236, 240)', borderBottom: '1px solid rgb(230, 236, 240)'}}>Nov</th>
+                                                    <th width="4%" align="center" style= {{borderRight: '1px solid rgb(230, 236, 240)', borderBottom: '1px solid rgb(230, 236, 240)'}}>Dic</th>
+                                                    <th width="4%" align="center" style= {{borderRight: '1px solid rgb(230, 236, 240)', borderBottom: '1px solid rgb(230, 236, 240)'}}>Ene</th>
+                                                    <th width="4%" align="center" style= {{borderRight: '1px solid rgb(230, 236, 240)', borderBottom: '1px solid rgb(230, 236, 240)'}}>Feb</th>
+                                                    <th width="4%" align="center" style= {{borderRight: '1px solid rgb(230, 236, 240)', borderBottom: '1px solid rgb(230, 236, 240)'}}>Mar</th>
+                                                    <th width="4%" align="center" style= {{borderRight: '1px solid rgb(230, 236, 240)', borderBottom: '1px solid rgb(230, 236, 240)'}}>Abr</th>
+                                                    <th width="4%" align="center" style= {{borderRight: '1px solid rgb(230, 236, 240)', borderBottom: '1px solid rgb(230, 236, 240)'}}>May</th>
+                                                    <th width="4%" align="center" style= {{borderRight: '1px solid rgb(230, 236, 240)', borderBottom: '1px solid rgb(230, 236, 240)'}}>Jun</th>
+                                                    <th width="6%" align="center" style= {{borderRight: '1px solid rgb(230, 236, 240)', borderBottom: '1px solid rgb(230, 236, 240)'}} title="Promedio Mensual">Mens.</th>
+                                                    <th width="6%" align="center" style= {{borderRight: '1px solid rgb(230, 236, 240)', borderBottom: '1px solid rgb(230, 236, 240)'}} title="Exámen Final">Final</th>
+                                                    <th width="7%" align="center" style= {{borderBottom: '1px solid rgb(230, 236, 240)'}} title="Promedio Final">Final</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                { alumnosCiclo && alumnosCiclo.map( (alumno, i) => {
+                                                    return (
+                                                    <tr key={alumno.Matricula}>
+                                                        {/* MATRICULA */}
+                                                        <td align="center" style={{borderRight: '1px solid rgb(230, 236, 240)', padding: '8px 0px'}}>{alumno.Matricula || ''}</td>
+                                                        {/* NO. DE LISTA */}
+                                                        <td align="center" style={{borderRight: '1px solid rgb(230, 236, 240)', padding: '8px 0px'}}>{alumno.Numero_Lista || ''}</td>
+                                                        {/* ALUMNO */}
+                                                        <td style={{borderRight: '1px solid rgb(230, 236, 240)', padding: '8px 0px'}}> {alumno.Paterno || ''} {alumno.Materno || ''} {alumno.Nombre || ''}</td>
+                                                        {/* CALIFICACIONES */}
+                                                        <td style={{borderRight: '1px solid rgb(230, 236, 240)', padding: '8px 0px'}}>{alumno.M01 || ''}</td>
+                                                        <td style={{borderRight: '1px solid rgb(230, 236, 240)', padding: '8px 0px'}}>{alumno.M02 || ''}</td>
+                                                        <td style={{borderRight: '1px solid rgb(230, 236, 240)', padding: '8px 0px'}}>{alumno.M03 || ''}</td>
+                                                        <td style={{borderRight: '1px solid rgb(230, 236, 240)', padding: '8px 0px'}}>{alumno.M04 || ''}</td>
+                                                        <td style={{borderRight: '1px solid rgb(230, 236, 240)', padding: '8px 0px'}}>{alumno.M05 || ''}</td>
+                                                        <td style={{borderRight: '1px solid rgb(230, 236, 240)', padding: '8px 0px'}}>{alumno.M06 || ''}</td>
+                                                        <td style={{borderRight: '1px solid rgb(230, 236, 240)', padding: '8px 0px'}}>{alumno.M07 || ''}</td>
+                                                        <td style={{borderRight: '1px solid rgb(230, 236, 240)', padding: '8px 0px'}}>{alumno.M08 || ''}</td>
+                                                        <td style={{borderRight: '1px solid rgb(230, 236, 240)', padding: '8px 0px'}}>{alumno.M09 || ''}</td>
+                                                        <td style={{borderRight: '1px solid rgb(230, 236, 240)', padding: '8px 0px'}}>{alumno.M10v}</td>
+                                                        <td style={{borderRight: '1px solid rgb(230, 236, 240)', padding: '8px 0px'}}>{alumno.Promedio_Mensual || ''}</td>
+                                                        <td style={{borderRight: '1px solid rgb(230, 236, 240)', padding: '8px 0px'}}>{alumno.Examen_Final || ''}</td>
+                                                        <td style={{borderRight: '1px solid rgb(230, 236, 240)', padding: '8px 0px'}}>{alumno.Promedio_Final || ''}</td>
+                                                    </tr>
+                                                    );
+                                                })}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    }
+                    {/* CALIFICACIONES DEL MES */}
+                    {
+                        !calificacionesCiclo &&
+                        <div className= "seccion-centro">
+                            <div className= "seccion-docente-imprimir-titulo">
+                                <h2>{title || ''}</h2>
+                            </div>
+                            <div className= "seccion-docente-imprimir">
+                                {teacher}
+                            </div>
+                            {/* TITULOS */}
+                            <div className= "subtitulo-materias">
+                                <div className= "contenedor-mitad-materias" >
+                                    <h4>
+                                        Listado de Alumnos de {informacion.Grado}° de {informacion.Nivel} 
+                                        <br/>
+                                        Materia: {informacion.Materia} - {informacion.Materia_Optativa}
+                                    </h4>
+                                </div>
+                                <div className= "contenedor-mitad-materias" >
+                                    {
+                                        habilitarBoton &&
+                                        <div className= "seccion-input">
+                                            <h4 style= {{width: 'auto', top: '0px', marginRight: '10px'}}>
+                                                Mes:
+                                            </h4>
+                                            <select className= "input-text-materias" name= "CMBMes">
+                                            { meses && meses.map( (mes, i) => {
+                                            return (
+                                                <option key={mes.Id_Mes}>{mes.Mes}</option>
+                                                );
+                                            })}
+                                            </select>
+                                        </div>
+                                    }
+                                    
+                                </div>
+                            </div>
+                            {/* TABLA */}
+                            <div className= "seccion-tabla-materias">
+                                <div className= "hover-elemento">
+                                    {/* TABLA */}
+                                    <div className= "contenedor-tabla-materias">
+                                        <table className= "tabla-materias">
+                                            <thead>
+                                                <tr>
+                                                    <th style={{textAlign:'center', width:'100px', borderBottom: '1px solid rgb(230, 236, 240)'}}><label>MATRICULA</label></th>
+                                                    <th style={{textAlign:'center', borderRight: '1px solid rgb(230, 236, 240)', borderLeft: '1px solid rgb(230, 236, 240)', borderBottom: '1px solid rgb(230, 236, 240)'}}><label>NO. DE LISTA</label></th>
+                                                    <th style={{textAlign:'center', borderRight: '1px solid rgb(230, 236, 240)', borderBottom: '1px solid rgb(230, 236, 240)'}}><label>ALUMNO</label></th>
+                                                    <th style={{textAlign:'center', width:'100px', borderBottom: '1px solid rgb(230, 236, 240)'}}><label>CALIFICACIÓN</label></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                { alumnos && alumnos.map( (alumno, i) => {
+                                                    return (
+                                                    <tr key={alumno.Matricula}>
+                                                        {/* MATRICULA */}
+                                                        <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{alumno.Matricula || ''}</td>
+                                                        {/* NO. DE LISTA */}
+                                                        <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{alumno.Numero_Lista || ''}</td>
+                                                        {/* ALUMNO */}
+                                                        <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{alumno.Paterno || ''} {alumno.Materno || ''} {alumno.Nombre || ''}</td>
+                                                        {/* CALIFICION */}
+                                                        <td className= "seccion-input-centro">
+                                                            <input
+                                                            placeholder= "0.00"
+                                                            className= "input-text-materias"
+                                                            value= {alumno.Calificacion || ''}
+                                                            onChange= {handleInputData}
+                                                            name={i}>
+                                                            </input>
+                                                        </td>
+                                                    </tr>
+                                                    );
+                                                })}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    
                     <div className= "subseccion hover-subseccion">
                         <div>
                             <div className= "subtitulo-materias" style= {{height: '30px'}}>
@@ -344,13 +485,35 @@ const Materias = () => {
                                     </div>
                                 }
                                 
-                                <div className= "contenedor-mitad-materias" >
+                                {/* <div className= "contenedor-mitad-materias" >
                                     <div className= "seccion-input" style= {{height: '50px'}}>
                                         <button className= "boton-pencil impresora" 
                                         name= "impresora"
                                         onClick= {handleImprimir}>
                                         </button>
                                     </div>
+                                </div> */}
+                                <div className= "contenedor-mitad-materias imprimir" >
+                                        <div className= "seccion-input" style= {{height: '50px'}}>
+                                            <label style= {{width: 'auto', top: '0px', marginRight: '10px'}}>
+                                                IMPRIMIR:
+                                            </label>
+                                            <select className= "input-text-materias" 
+                                            onChange= {handleSeleccionar}>
+                                                <option value= {1}>
+                                                    Calificaciones de mes
+                                                </option>
+                                                <option value= {2}>
+                                                    Calificaciones del ciclo
+                                                </option>
+                                            </select>
+                                            <div className= "seccion-input" style= {{height: '50px', marginLeft: '10px'}}>
+                                                <button className= "boton-pencil impresora"
+                                                name= "impresora"
+                                                onClick= {handleImprimir}>
+                                                </button>
+                                            </div>
+                                        </div>
                                 </div>
                             </div>
                             <div>

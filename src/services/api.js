@@ -241,6 +241,25 @@ const postCalificacionesOptativas = async(calificaciones) => {
     });
 };
 
+const postCalificacionesOptativasCiclo = async(calificaciones) => {
+  const url = `${http.API_END_POINT.BASE}/optional-grades/materias-optativas-ciclo`;
+  const method = http.METHOD_TYPE.POST;
+
+  const header = {
+    'Content-Type': http.CONTENT_TYPE.APPLICATION_JSON,
+  };
+
+  const token = getToken();
+  if(token) {
+    header['Authorization']=token;
+  }
+
+  return HttpService.request(method, header, calificaciones, url)
+    .then((response) => {
+      return response;
+    });
+};
+
 const getCapturaFaltasOptional = async(materia) => {
   const url = `${http.API_END_POINT.BASE}/faltas-optativas/alumnos-faltas-optativas`;
   const method = http.METHOD_TYPE.POST;
@@ -290,6 +309,7 @@ export default {
   getOptionalGrades,
   getCapturaOptional,
   postCalificacionesOptativas,
+  postCalificacionesOptativasCiclo,
   getFaltas,
   getCapturaFaltas,
   postFaltasOficiales,

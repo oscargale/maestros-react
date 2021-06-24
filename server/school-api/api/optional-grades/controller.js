@@ -84,100 +84,101 @@ class OptionalGradesController {
                 { type: Sequelize.QueryTypes.SELECT }
             );
             const mesCaptura= config[0].ID_MES_CAPTURA;
+            console.log("mes captura: ", mesCaptura);
 
             config =  await sequelize.getInstanceMssql().query(
                 'SELECT ciclo FROM MAE_CONFIGURACION', 
                 { type: Sequelize.QueryTypes.SELECT }
             );
             const ciclo= config[0].ciclo;
+            console.log("ciclo: ", ciclo);
             let meses= null;
             let alumnos= null;
 
-            if (req.body.Id_Materia > 0 && mesCaptura < 11) {
-                // MES
-                if (mesCaptura > 0) {
-                    if (req.body.Id_Nivel === 4) {
-                        const config = await sequelize.getInstanceMssql().query(
-                            `Select SEMESTRE_ACTUAL From Mae_Configuracion`,
-                            { type: Sequelize.QueryTypes.SELECT }
-                        );
-                        const semestre= config[0].SEMESTRE_ACTUAL;
+            // MES
+            if (mesCaptura > 0) {
+                if (req.body.Id_Nivel === 4) {
+                    const config = await sequelize.getInstanceMssql().query(
+                        `Select SEMESTRE_ACTUAL From Mae_Configuracion`,
+                        { type: Sequelize.QueryTypes.SELECT }
+                    );
+                    const semestre= config[0].SEMESTRE_ACTUAL;
 
-                        meses = await sequelize.getInstanceMssql().query(
-                            `Select Id_Mes, Mes from Mae_Mes_Captura 
-                            Where Id_Status=1 and Id_Nivel = ${req.body.Id_Nivel} and Id_Mes= ${mesCaptura} 
-                            and Periodo = ${semestre} Order by Id_Mes`,
-                            { type: Sequelize.QueryTypes.SELECT }
-                        );
-                    } else {
-                        meses = await sequelize.getInstanceMssql().query(
-                            `Select Id_Mes, Mes from Mae_Mes_Captura 
-                            Where Id_Status=1 and Id_Nivel = ${req.body.Id_Nivel} and Id_Mes= ${mesCaptura} 
-                            Order by Id_Mes`,
-                            { type: Sequelize.QueryTypes.SELECT }
-                        );
-                    }
+                    meses = await sequelize.getInstanceMssql().query(
+                        `Select Id_Mes, Mes from Mae_Mes_Captura 
+                        Where Id_Status=1 and Id_Nivel = ${req.body.Id_Nivel} and Id_Mes= ${mesCaptura} 
+                        and Periodo = ${semestre} Order by Id_Mes`,
+                        { type: Sequelize.QueryTypes.SELECT }
+                    );
                 } else {
                     meses = await sequelize.getInstanceMssql().query(
                         `Select Id_Mes, Mes from Mae_Mes_Captura 
-                        Where Id_Status=1 and Id_Nivel = ${req.body.Id_Nivel} 
+                        Where Id_Status=1 and Id_Nivel = ${req.body.Id_Nivel} and Id_Mes= ${mesCaptura} 
                         Order by Id_Mes`,
                         { type: Sequelize.QueryTypes.SELECT }
                     );
                 }
-
-                // ALUMNOS
-
-                // CAMPO CALIFICACIONES
-                let campoCalificacion= null;
-
-                if (mesCaptura < 10){
-                    campoCalificacion= "M0" + mesCaptura;
-                } else { 
-                    campoCalificacion= "M" + mesCaptura;
-                }
-
-                let clave= req.body.Clave;
-                let vlCampoOptativa= '';
-                if (req.body.Id_Nivel === 4) { // PREPARATORIA
-                    if (clave.substr(1,2) === "DE") { // 'EDUCACION FISICA
-                        vlCampoOptativa= " AND A.Id_Deporte = " + req.body.Id_Optativa + " and A.Id_Profesor_Deporte = " + req.body.Id_Personal;
-                    } else {
-                        if (clave.substr(1,2) === "ET") { //'EDUCACION TECNICA
-                            vlCampoOptativa= " AND A.Id_Tecnologica = " + req.body.Id_Optativa + " and A.Id_Profesor_Tecnologica = " + req.body.Id_Personal;
-                        } else {
-                            if (clave.substr(1,2) === "OP") { //'EDUCACION ARTISTICA
-                                vlCampoOptativa= " AND A.Id_Artistica = " + req.body.Id_Optativa + " and A.Id_Profesor_Artistica = " + req.body.Id_Personal;
-                            } 
-                        }
-                    }
-                } else { // SECUNDARIA
-                    if (clave.substr(1,2) === "EF") { // 'EDUCACION FISICA
-                    vlCampoOptativa= " AND A.Id_Deporte = " + req.body.Id_Optativa + " and A.Id_Profesor_Deporte = " + req.body.Id_Personal;
-                    } else {
-                        if (clave.substr(1,2) === "ET") { //'EDUCACION TECNICA
-                            vlCampoOptativa= " AND A.Id_Tecnologica = " + req.body.Id_Optativa + " and A.Id_Profesor_Tecnologica = " + req.body.Id_Personal;
-                        } else {
-                            if (clave.substr(1,2) === "EA") { //'EDUCACION ARTISTICA
-                                vlCampoOptativa= " AND A.Id_Artistica = " + req.body.Id_Optativa + " and A.Id_Profesor_Artistica = " + req.body.Id_Personal;
-                            } 
-                        }
-                    }
-                }
-
-                alumnos = await sequelize.getInstanceMssql().query(
-                    `SELECT A.Ciclo, A.Matricula, A.Numero_Lista , A.Paterno, A.Materno, A.Nombre, A.Id_Nivel, A.Id_Grado, A.Grupo,
-                    C.${campoCalificacion} as Calificacion, ${req.body.Id_Materia} AS Id_Materia, ${req.body.Id_Personal} AS Id_Personal, 
-                    ${mesCaptura} AS Id_Mes_Captura, '${req.body.Materia}' AS Materia, '${clave}' AS Clave
-                    FROM MAE_ALUMNOS A LEFT OUTER JOIN 
-                    (Select * From MAE_CALIFICACIONES Where Id_Materia = ${req.body.Id_Materia}) 
-                    C ON A.Id_Grado = C.Id_Grado AND A.Id_Nivel = C.Id_Nivel AND A.Matricula = C.Matricula AND A.Ciclo = C.Ciclo 
-                    WHERE (A.Ciclo = ${ciclo}) AND (A.Id_Nivel = ${req.body.Id_Nivel}) AND 
-                    (A.Id_Grado = ${req.body.Id_Grado}) and (A.Id_Status=1) ${vlCampoOptativa} 
-                    ORDER BY A.Paterno, A.Materno, A.Nombre`,
+            } else {
+                meses = await sequelize.getInstanceMssql().query(
+                    `Select Id_Mes, Mes from Mae_Mes_Captura 
+                    Where Id_Status=1 and Id_Nivel = ${req.body.Id_Nivel} 
+                    Order by Id_Mes`,
                     { type: Sequelize.QueryTypes.SELECT }
                 );
             }
+
+            // ALUMNOS
+
+            // CAMPO CALIFICACIONES
+            let campoCalificacion= null;
+
+            if (mesCaptura < 10){
+                campoCalificacion= "M0" + mesCaptura;
+            } else { 
+                campoCalificacion= "M" + mesCaptura;
+            }
+
+            let clave= req.body.Clave;
+            let vlCampoOptativa= '';
+            if (req.body.Id_Nivel === 4) { // PREPARATORIA
+                if (clave.substr(1,2) === "DE") { // 'EDUCACION FISICA
+                    vlCampoOptativa= " AND A.Id_Deporte = " + req.body.Id_Optativa + " and A.Id_Profesor_Deporte = " + req.body.Id_Personal;
+                } else {
+                    if (clave.substr(1,2) === "ET") { //'EDUCACION TECNICA
+                        vlCampoOptativa= " AND A.Id_Tecnologica = " + req.body.Id_Optativa + " and A.Id_Profesor_Tecnologica = " + req.body.Id_Personal;
+                    } else {
+                        if (clave.substr(1,2) === "OP") { //'EDUCACION ARTISTICA
+                            vlCampoOptativa= " AND A.Id_Artistica = " + req.body.Id_Optativa + " and A.Id_Profesor_Artistica = " + req.body.Id_Personal;
+                        } 
+                    }
+                }
+            } else { // SECUNDARIA
+                if (clave.substr(1,2) === "EF") { // 'EDUCACION FISICA
+                vlCampoOptativa= " AND A.Id_Deporte = " + req.body.Id_Optativa + " and A.Id_Profesor_Deporte = " + req.body.Id_Personal;
+                } else {
+                    if (clave.substr(1,2) === "ET") { //'EDUCACION TECNICA
+                        vlCampoOptativa= " AND A.Id_Tecnologica = " + req.body.Id_Optativa + " and A.Id_Profesor_Tecnologica = " + req.body.Id_Personal;
+                    } else {
+                        if (clave.substr(1,2) === "EA") { //'EDUCACION ARTISTICA
+                            vlCampoOptativa= " AND A.Id_Artistica = " + req.body.Id_Optativa + " and A.Id_Profesor_Artistica = " + req.body.Id_Personal;
+                        } 
+                    }
+                }
+            }
+
+            alumnos = await sequelize.getInstanceMssql().query(
+                `SELECT A.Ciclo, A.Matricula, A.Numero_Lista , A.Paterno, A.Materno, A.Nombre, A.Id_Nivel, A.Id_Grado, A.Grupo,
+                C.${campoCalificacion} as Calificacion, ${req.body.Id_Materia} AS Id_Materia, ${req.body.Id_Personal} AS Id_Personal, 
+                ${mesCaptura} AS Id_Mes_Captura, '${req.body.Materia}' AS Materia, '${clave}' AS Clave
+                FROM MAE_ALUMNOS A LEFT OUTER JOIN 
+                (Select * From MAE_CALIFICACIONES Where Id_Materia = ${req.body.Id_Materia}) 
+                C ON A.Id_Grado = C.Id_Grado AND A.Id_Nivel = C.Id_Nivel AND A.Matricula = C.Matricula AND A.Ciclo = C.Ciclo 
+                WHERE (A.Ciclo = ${ciclo}) AND (A.Id_Nivel = ${req.body.Id_Nivel}) AND 
+                (A.Id_Grado = ${req.body.Id_Grado}) and (A.Id_Status=1) ${vlCampoOptativa} 
+                ORDER BY A.Paterno, A.Materno, A.Nombre`,
+                { type: Sequelize.QueryTypes.SELECT }
+            );
+            
             res.json ({ success: true , message: 'getCapturaOptional', data: {meses, alumnos} });
         } catch(error) {
             console.log(error);
@@ -293,6 +294,123 @@ class OptionalGradesController {
         } catch(error) {
             console.log(error);
             res.json ({ success: false , message: 'postCalificacionesOptativas', error });
+        }
+    }
+
+    static async getCapturaOptionalCiclo (req, res, next) {
+        if(!req.body) {
+            res.json ({ success: false , message: 'error data' });
+            return;
+        }
+        console.log(req.body);
+
+        try {
+            let config = await sequelize.getInstanceMssql().query(
+                `Select Top 1 ID_MES_CAPTURA From Mae_Personal_Materias 
+                Where Id_Personal = ${req.body.Id_Personal} AND Id_Nivel = ${req.body.Id_Nivel}`,
+                { type: Sequelize.QueryTypes.SELECT }
+            );
+            const mesCaptura= config[0].ID_MES_CAPTURA;
+            console.log("mes captura: ", mesCaptura);
+
+            config =  await sequelize.getInstanceMssql().query(
+                'SELECT ciclo FROM MAE_CONFIGURACION', 
+                { type: Sequelize.QueryTypes.SELECT }
+            );
+            const ciclo= config[0].ciclo;
+            console.log("ciclo: ", ciclo);
+            let meses= null;
+            let alumnos= null;
+
+            // MES
+            if (mesCaptura > 0) {
+                if (req.body.Id_Nivel === 4) {
+                    const config = await sequelize.getInstanceMssql().query(
+                        `Select SEMESTRE_ACTUAL From Mae_Configuracion`,
+                        { type: Sequelize.QueryTypes.SELECT }
+                    );
+                    const semestre= config[0].SEMESTRE_ACTUAL;
+
+                    meses = await sequelize.getInstanceMssql().query(
+                        `Select Id_Mes, Mes from Mae_Mes_Captura 
+                        Where Id_Status=1 and Id_Nivel = ${req.body.Id_Nivel} and Id_Mes= ${mesCaptura} 
+                        and Periodo = ${semestre} Order by Id_Mes`,
+                        { type: Sequelize.QueryTypes.SELECT }
+                    );
+                } else {
+                    meses = await sequelize.getInstanceMssql().query(
+                        `Select Id_Mes, Mes from Mae_Mes_Captura 
+                        Where Id_Status=1 and Id_Nivel = ${req.body.Id_Nivel} and Id_Mes= ${mesCaptura} 
+                        Order by Id_Mes`,
+                        { type: Sequelize.QueryTypes.SELECT }
+                    );
+                }
+            } else {
+                meses = await sequelize.getInstanceMssql().query(
+                    `Select Id_Mes, Mes from Mae_Mes_Captura 
+                    Where Id_Status=1 and Id_Nivel = ${req.body.Id_Nivel} 
+                    Order by Id_Mes`,
+                    { type: Sequelize.QueryTypes.SELECT }
+                );
+            }
+
+            // ALUMNOS
+
+            // CAMPO CALIFICACIONES
+            let campoCalificacion= null;
+
+            if (mesCaptura < 10){
+                campoCalificacion= "M0" + mesCaptura;
+            } else { 
+                campoCalificacion= "M" + mesCaptura;
+            }
+
+            let clave= req.body.Clave;
+            let vlCampoOptativa= '';
+            if (req.body.Id_Nivel === 4) { // PREPARATORIA
+                if (clave.substr(1,2) === "DE") { // 'EDUCACION FISICA
+                    vlCampoOptativa= " AND A.Id_Deporte = " + req.body.Id_Optativa + " and A.Id_Profesor_Deporte = " + req.body.Id_Personal;
+                } else {
+                    if (clave.substr(1,2) === "ET") { //'EDUCACION TECNICA
+                        vlCampoOptativa= " AND A.Id_Tecnologica = " + req.body.Id_Optativa + " and A.Id_Profesor_Tecnologica = " + req.body.Id_Personal;
+                    } else {
+                        if (clave.substr(1,2) === "OP") { //'EDUCACION ARTISTICA
+                            vlCampoOptativa= " AND A.Id_Artistica = " + req.body.Id_Optativa + " and A.Id_Profesor_Artistica = " + req.body.Id_Personal;
+                        } 
+                    }
+                }
+            } else { // SECUNDARIA
+                if (clave.substr(1,2) === "EF") { // 'EDUCACION FISICA
+                vlCampoOptativa= " AND A.Id_Deporte = " + req.body.Id_Optativa + " and A.Id_Profesor_Deporte = " + req.body.Id_Personal;
+                } else {
+                    if (clave.substr(1,2) === "ET") { //'EDUCACION TECNICA
+                        vlCampoOptativa= " AND A.Id_Tecnologica = " + req.body.Id_Optativa + " and A.Id_Profesor_Tecnologica = " + req.body.Id_Personal;
+                    } else {
+                        if (clave.substr(1,2) === "EA") { //'EDUCACION ARTISTICA
+                            vlCampoOptativa= " AND A.Id_Artistica = " + req.body.Id_Optativa + " and A.Id_Profesor_Artistica = " + req.body.Id_Personal;
+                        } 
+                    }
+                }
+            }
+
+            alumnos = await sequelize.getInstanceMssql().query(
+                `SELECT A.Ciclo, A.Matricula, A.Numero_Lista , A.Paterno, A.Materno, A.Nombre, A.Id_Nivel, A.Id_Grado, A.Grupo,
+                C.M01, C.M02, C.M03, C.M04, C.M05, C.M06, C.M07, C.M08, C.M09, C.M10, C.Promedio_Mensual, C.Examen_Final, C.Promedio_Final,
+                ${req.body.Id_Materia} AS Id_Materia, ${req.body.Id_Personal} AS Id_Personal, 
+                ${mesCaptura} AS Id_Mes_Captura, '${req.body.Materia}' AS Materia, '${clave}' AS Clave
+                FROM MAE_ALUMNOS A LEFT OUTER JOIN 
+                (Select * From MAE_CALIFICACIONES Where Id_Materia = ${req.body.Id_Materia}) 
+                C ON A.Id_Grado = C.Id_Grado AND A.Id_Nivel = C.Id_Nivel AND A.Matricula = C.Matricula AND A.Ciclo = C.Ciclo 
+                WHERE (A.Ciclo = ${ciclo}) AND (A.Id_Nivel = ${req.body.Id_Nivel}) AND 
+                (A.Id_Grado = ${req.body.Id_Grado}) and (A.Id_Status=1) ${vlCampoOptativa} 
+                ORDER BY A.Paterno, A.Materno, A.Nombre`,
+                { type: Sequelize.QueryTypes.SELECT }
+            );
+            
+            res.json ({ success: true , message: 'getCapturaOptionalCiclo', data: {meses, alumnos} });
+        } catch(error) {
+            console.log(error);
+            res.json ({ success: false , message: 'getCapturaOptionalCiclo', error });
         }
     }
 

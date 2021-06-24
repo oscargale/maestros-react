@@ -16,6 +16,7 @@ export const http = {
   },
   API_END_POINT: {
     BASE: 'https://webapi2.ico.edu.mx'
-    // BASE: 'http://localhost:8002'
+    // BASE: 'http://localhost:8004'
+    // BASE: 'http://localhost:8002'  ----- NO SIRVE
   },
 };

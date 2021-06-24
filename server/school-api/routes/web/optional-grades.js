@@ -16,4 +16,8 @@ router.post('/materias-optativas-calificaciones',
     JwtAuthentication,
     OptionalGradesController.postCalificacionesOptativas);
 
+router.post('/materias-optativas-ciclo/',
+    JwtAuthentication,
+    OptionalGradesController.getCapturaOptionalCiclo);
+
 export default router;
