@@ -123,7 +123,7 @@ class FaltasOficialesController {
                     AND A.Matricula = C.Matricula AND A.Ciclo = C.Ciclo 
                     WHERE (A.Ciclo = '${req.body.Ciclo}') AND (A.Id_Nivel = '${req.body.Id_Nivel}') AND (A.Id_Grado = '${req.body.Id_Grado}') 
                     AND (A.Grupo = '${req.body.Grupo}') and (A.Id_Status=1) ${condicionMateria} 
-                    ORDER BY A.Numero_Lista`,
+                    ORDER BY A.Paterno,A.Materno,A.Nombre`,
                     { type: Sequelize.QueryTypes.SELECT }
                 );
             }
