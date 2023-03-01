@@ -274,7 +274,7 @@ const Faltas = () => {
                                                         {/* NO. DE LISTA */}
                                                         <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{alumno.Numero_Lista || ''}</td>
                                                         {/* ALUMNO */}
-                                                        <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{alumno.Nombre || ''} {alumno.Paterno || ''} {alumno.Materno || ''}</td>
+                                                        <td style={{borderRight: '1px solid rgb(230, 236, 240)'}}>{alumno.Paterno || ''} {alumno.Materno || ''} {alumno.Nombre  || ''}</td>
                                                         {/* CALIFICION */}
                                                         <td className= "seccion-input-centro">
                                                             <input
