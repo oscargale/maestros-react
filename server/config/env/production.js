@@ -5,7 +5,7 @@ export default {
   databaseMssql: {
     client: 'mssql',
     connection: {
-      host: '189.205.192.138',
+      host: '200.188.110.227',
       user: 'UsuarioICO',
       password: 'JG@leana_1910N@TS',
       database: 'ICOEscolar',
